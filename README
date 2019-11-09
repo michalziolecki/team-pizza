@@ -1,0 +1,15 @@
+At the begging:
+- Create venv enviroment for python
+  sudo apt-get install python-virtualenv
+  pip install virtualenv
+  virtualenv --python=/usr/bin/python3.6  venv  # venv is a directory
+  source env/bin/activate ./   # (root of project)
+- install requirements using pip
+  pip3 install -r requirements
+- check installed apps by pip
+  pip freeze
+
+- run app by command:
+  python3 manage.py makemigrations
+  python3 manage.py migrate
+  python3 manage.py runserver
