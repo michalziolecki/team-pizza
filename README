@@ -1,4 +1,4 @@
-At the begging:
+if you want run this app on your local machine:
 - Create venv enviroment for python
   sudo apt-get install python-virtualenv
   pip install virtualenv
@@ -13,3 +13,5 @@ At the begging:
   python3 manage.py makemigrations
   python3 manage.py migrate
   python3 manage.py runserver
+
+if you want run this app on your docker container:
