@@ -22,6 +22,6 @@ COPY . /TeamPizza/
 RUN chmod +x migrations.sh
 
 # "Running django server"
-ENTRYPOINT /TeamPizza/migrations.sh
+ENTRYPOINT python3 /TeamPizza/manage.py migrate --noinput
 ENTRYPOINT python3 /TeamPizza/manage.py runserver 0.0.0.0:8000
 

@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'TeamPizza.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'teampizza',
+        'NAME': 'TeamPizza',
         'USER': 'pizzaadmin',
         'PASSWORD': 'AdminPizza123#',
-        'HOST': '127.0.0.1',
+        'HOST': 'pg-docker',
         'PORT': '5432',
     }
 }
