@@ -1,0 +1,13 @@
+version: 3
+services:
+   db-postgres:
+     image: postgres:lastest
+     volumes:
+       -
+   web-app:
+     build: .
+     ports:
+       - "8080:8000"
+     depends_on:
+       - db-postgres
+     

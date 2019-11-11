@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'TeamPizza',
         'USER': 'pizzaadmin',
         'PASSWORD': 'AdminPizza123#',
-        'HOST': 'pg-docker',
+        'HOST': 'db-postgres',
         'PORT': '5432',
     }
 }
