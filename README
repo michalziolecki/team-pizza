@@ -19,9 +19,9 @@ if you want run this app on your docker container (example):
   docker build -t teampizza:v1.0 .
   docker pull postgres:12.0
   mkdir -p $HOME/DockerData/volumes/postgres_backup
-  docker run --name db-postgres -e POSTGRES_PASSWORD="AdminPizza123#" -e POSTGRES_USER="pizzaadmin" \
+  docker run --name db-postgres -e POSTGRES_PASSWORD="AdminPizza123." -e POSTGRES_USER="pizzaadmin" \
    -e POSTGRES_DB="teampizza" -d -p 4321:5432 \
-    -v $HOME/docker/volumes/postgres:/var/lib/postgresql/data postgres:12.0
+    -v $HOME/DockerData/volumes/postgres_backup:/var/lib/postgresql/data postgres:12.0
   docker run -d -p 8080:8000 --link db-postgres  --name teampizza-django teampizza:v1.0
   # db-postgres is a name of host container - added this field to settings.py
   # if docker didn't execute migrate operation run command: docker exec -it <container> bash and run python manage.py migrate

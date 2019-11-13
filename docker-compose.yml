@@ -1,13 +1,29 @@
-version: 3
+version: '3'
 services:
    db-postgres:
-     image: postgres:lastest
-     volumes:
-       -
-   web-app:
-     build: .
+     image: postgres:12.0
+     container_name: db-postgres
      ports:
-       - "8080:8000"
+      - '4321:5432'
+     volumes:
+       - $HOME/DockerData/volumes/postgres_backup:/var/lib/postgresql/data
+     environment:
+           LC_ALL: C.UTF-8
+           POSTGRES_USER: pizzaadmin
+           POSTGRES_PASSWORD: AdminPizza123.
+           POSTGRES_DB: TeamPizza
+   web-app:
+     restart: always
+     build: .
+     container_name: webTeamPizza
+     environment:
+       DEBUG: 'true'
+     volumes:
+       - .:/TeamPizza
+     #expose:
+     # - 8080
+     ports:
+       - '8080:8080'
      depends_on:
        - db-postgres
-     
+     command: bash -c "python3 /TeamPizza/manage.py  makemigrations --noinput && python3 /TeamPizza/manage.py  migrate --noinput && python3 /TeamPizza/manage.py runserver 0.0.0.0:8080"

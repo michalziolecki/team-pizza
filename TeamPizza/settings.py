@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'TeamPizza',
         'USER': 'pizzaadmin',
-        'PASSWORD': 'AdminPizza123#',
+        'PASSWORD': 'AdminPizza123.',
         'HOST': 'db-postgres',
         'PORT': '5432',
     }
