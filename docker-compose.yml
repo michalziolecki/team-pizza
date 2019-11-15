@@ -14,13 +14,16 @@ services:
            POSTGRES_DB: TeamPizza
    nginx:
      restart: always
-     build: ./nginx/
+     image: nginx:lastest
      ports:
        - "80:80"
      volumes:
-       - web-static:/www/static
-     links:
-       - web-app:web-app
+       - $HOME/NginxData/config/nginx/:/etc/nginx/conf.d
+#       - web-static:/www/static
+     depends_on:  # <-- wait for djangoapp to be "ready" before starting this service
+       - web-app
+#     links:
+#       - web-app:web-app
    web-app:
      restart: always
      build: .
@@ -29,10 +32,16 @@ services:
        DEBUG: 'true'
      volumes:
        - .:/TeamPizza
-     #expose:
-     # - 8080
-     ports:
-       - '8080:8080'
+     expose:
+      - 8000
+#     ports:
+#       - '8080:8080'
      depends_on:
        - db-postgres
-     command: bash -c "python3 /TeamPizza/manage.py  makemigrations --noinput && python3 /TeamPizza/manage.py  migrate --noinput && python3 /TeamPizza/manage.py runserver 0.0.0.0:8080"
+     network:
+       - nginx_network
+     command: bash -c "python3 /TeamPizza/manage.py  makemigrations --noinput && python3 /TeamPizza/manage.py  migrate --noinput && python3 /TeamPizza/manage.py runserver 0.0.0.0:8000"
+
+networks:
+  nginx_network:
+    driver: bridge
