@@ -6,24 +6,30 @@ services:
      ports:
       - '4321:5432'
      volumes:
-       - $HOME/DockerData/volumes/postgres_backup:/var/lib/postgresql/data
+       - ./databse_volume:/var/lib/postgresql/data
      environment:
            LC_ALL: C.UTF-8
            POSTGRES_USER: pizzaadmin
            POSTGRES_PASSWORD: AdminPizza123.
            POSTGRES_DB: TeamPizza
+      network:
+       - database_network
+            
    nginx:
      restart: always
      image: nginx:lastest
      ports:
-       - "80:80"
+       - "8080:80"
      volumes:
-       - $HOME/NginxData/config/nginx/:/etc/nginx/conf.d
+       - ./nginx_config/conf.d:/etc/nginx/conf.d
 #       - web-static:/www/static
      depends_on:  # <-- wait for djangoapp to be "ready" before starting this service
        - web-app
-#     links:
+     network:
+       - nginx_network
+#     links:  # <--  other method to create connections between containers 
 #       - web-app:web-app
+
    web-app:
      restart: always
      build: .
@@ -39,9 +45,12 @@ services:
      depends_on:
        - db-postgres
      network:
+       - database_network
        - nginx_network
      command: bash -c "python3 /TeamPizza/manage.py  makemigrations --noinput && python3 /TeamPizza/manage.py  migrate --noinput && python3 /TeamPizza/manage.py runserver 0.0.0.0:8000"
 
 networks:
   nginx_network:
+    driver: bridge
+  database_network:
     driver: bridge

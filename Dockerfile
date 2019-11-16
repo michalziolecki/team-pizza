@@ -16,10 +16,10 @@ COPY requirements /TeamPizza/
 RUN pip install -r requirements
 
 # copy project repository
-COPY . /TeamPizza/
+COPY ./TeamPizza/* /TeamPizza/
 
 # prepare django db
-RUN chmod +x migrations.sh
+RUN chmod +x /TeamPizza/migrations.sh
 
 # "Running django server"
 #ENTRYPOINT python3 /TeamPizza/manage.py migrate --noinput
