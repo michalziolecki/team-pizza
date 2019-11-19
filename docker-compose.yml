@@ -1,56 +1,47 @@
 version: '3'
+
 services:
-   db-postgres:
-     image: postgres:12.0
-     container_name: db-postgres
-     ports:
+  db-postgres:
+    image: postgres:12.0
+    container_name: db-postgres
+    ports:
       - '4321:5432'
-     volumes:
-       - ./databse_volume:/var/lib/postgresql/data
-     environment:
-           LC_ALL: C.UTF-8
-           POSTGRES_USER: pizzaadmin
-           POSTGRES_PASSWORD: AdminPizza123.
-           POSTGRES_DB: TeamPizza
-      network:
-       - database_network
-            
-   nginx:
-     restart: always
-     image: nginx:lastest
-     ports:
-       - "8080:80"
-     volumes:
-       - ./nginx_config/conf.d:/etc/nginx/conf.d
-#       - web-static:/www/static
-     depends_on:  # <-- wait for djangoapp to be "ready" before starting this service
-       - web-app
-     network:
-       - nginx_network
-#     links:  # <--  other method to create connections between containers 
-#       - web-app:web-app
+    volumes:
+      - ./databse_volume:/var/lib/postgresql/data
+    environment:
+      LC_ALL: C.UTF-8
+      POSTGRES_USER: pizzaadmin
+      POSTGRES_PASSWORD: AdminPizza123.
+      POSTGRES_DB: TeamPizza
 
-   web-app:
-     restart: always
-     build: .
-     container_name: webTeamPizza
-     environment:
-       DEBUG: 'true'
-     volumes:
-       - .:/TeamPizza
-     expose:
+  nginx:
+    image: nginx
+    restart: always
+    container_name: nginx
+    ports:
+      - "8080:8000"
+    volumes:
+      - ./nginx_config/conf.d:/etc/nginx/conf.d
+      - ./TeamPizza/static:/static
+    depends_on:  # <-- wait for djangoapp to be "ready" before starting this service
+      - web-app
+    links:  # <--  other method to create connections between containers
+      - web-app:web-app
+
+  web-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    container_name: web-app
+    environment:
+      DEBUG: 'true'
+    volumes:
+      - ./TeamPizza/:/TeamPizza
+    expose:
       - 8000
-#     ports:
-#       - '8080:8080'
-     depends_on:
-       - db-postgres
-     network:
-       - database_network
-       - nginx_network
-     command: bash -c "python3 /TeamPizza/manage.py  makemigrations --noinput && python3 /TeamPizza/manage.py  migrate --noinput && python3 /TeamPizza/manage.py runserver 0.0.0.0:8000"
-
-networks:
-  nginx_network:
-    driver: bridge
-  database_network:
-    driver: bridge
+    depends_on:
+      - db-postgres
+    links:
+      - db-postgres:db-postgres
+    command: bash -c "python3 /TeamPizza/manage.py  makemigrations --noinput && python3 /TeamPizza/manage.py  migrate --noinput && python3 /TeamPizza/manage.py runserver 0.0.0.0:8000"
