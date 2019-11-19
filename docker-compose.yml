@@ -7,7 +7,7 @@ services:
     ports:
       - '4321:5432'
     volumes:
-      - ./databse_volume:/var/lib/postgresql/data
+      - ./database_volume:/var/lib/postgresql/data
     environment:
       LC_ALL: C.UTF-8
       POSTGRES_USER: pizzaadmin
