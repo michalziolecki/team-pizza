@@ -27,3 +27,5 @@ if you want run this app on your docker container (example):
   # if docker didn't execute migrate operation run command: docker exec -it <container> bash and run python manage.py migrate
 
 - run docker-compose configuration
+  # run command to starts containers for nginx, django and postgres (in directory with file './docker-compose.yml'):
+  docker-compose up --build
