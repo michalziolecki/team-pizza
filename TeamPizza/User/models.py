@@ -19,12 +19,12 @@ class User(models.Model):
     role = models.CharField(max_length=1, choices=ROLES, default=USER)
 
 
-# one to many relation
 class LoginInformation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     last_login = models.DateTimeField(null=True)
     ip_login = models.IPAddressField()
 
 
-# one to one relation
 class LastOrder(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     pieces_number = models.IntegerField(default=0)
