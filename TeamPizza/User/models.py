@@ -22,7 +22,7 @@ class User(models.Model):
 class LoginInformation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     last_login = models.DateTimeField(null=True)
-    ip_login = models.IPAddressField()
+    ip_login = models.GenericIPAddressField()
 
 
 class LastOrder(models.Model):
