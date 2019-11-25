@@ -4,10 +4,12 @@
 
 {% block content %}
     <div>
-        <h1>Login</h1>
         <form method="post" action="/user/login">
-            <input name="login" value="username">
-            <input type="password" value="password">
+            <label for="login">Username</label>
+            <input name="login" value="username" required>
+            <label for="password">Password</label>
+            <input type="password" value="password" required>
+            <button type="submit">Login</button>
         </form>
     </div>
 {% endblock %}
