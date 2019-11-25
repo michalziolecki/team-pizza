@@ -1,0 +1,13 @@
+{% extends '/TeamPizza/index.html' %}
+
+{% block title %} Login to Team Pizza {% endblock %}
+
+{% block content %}
+    <div>
+        <h1>Login</h1>
+        <form method="post" action="/user/login">
+            <input name="login" value="username">
+            <input type="password" value="password">
+        </form>
+    </div>
+{% endblock %}
