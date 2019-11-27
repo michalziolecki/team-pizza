@@ -7,6 +7,15 @@
     align-items: center;
 }
 
+#login-wrapper{
+    width: 90%;
+    height: 80%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 
 .form-container {
     font-family: 'Poppins', sans-serif;
@@ -39,7 +48,7 @@
     color: rgb(226, 226, 226);
     font-size: 2.5rem;
     position: absolute;
-    top: 3.5rem;
+    top: 2.5rem;
     left: 10rem;
 }
 
