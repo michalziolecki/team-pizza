@@ -44,6 +44,40 @@
     z-index: -1;
 }
 
+.cross{
+    position: absolute;
+    top: 2.5rem;
+    /*left: 35rem;*/
+    left: 85%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.cross div{
+    /*background-color: rgb(226, 226, 226);*/
+    /*transition: all 0.3 ease;*/
+}
+
+.cross-line{
+    width: 25px;
+	height: 5px;
+    margin: 5px;
+	/*transition: all 0.3 ease;*/
+    background-color: rgb(226, 226, 226);
+}
+
+#line-1{
+    transform: rotate(-45deg) translate(-1px, 1px);
+}
+
+#line-2{
+    transform: rotate(45deg) translate(-6px, -6px);
+}
+
+#form-exit{
+    cursor: pointer;
+}
+
 .form-heading{
     color: rgb(226, 226, 226);
     font-size: 2.5rem;

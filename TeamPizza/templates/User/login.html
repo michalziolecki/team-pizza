@@ -3,31 +3,37 @@
 {% block title %} Login to Team Pizza {% endblock %}
 
 {% block content %}
-<div id="login-wrapper">
-    <div class="form-container">
-        <span class="form-heading">Login</span>
-        <form action="login/">
-            <div class="input-group">
-                <i class="fas fa-user"></i>
-                <input type="text" placeholder="Username ..." required>
-                <span class="bar"></span>
-            </div>
-            <div class="input-group">
-                <i class="fas fa-envelope"></i>
-                <input type="email" placeholder="Email..." required>
-                <span class="bar"></span>
-            </div>
-            <div class="input-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" placeholder="password..." required>
-                <span class="bar"></span>
-            </div>
-            <div class="input-group">
-                <button>
-                    <i class="fab fa-telegram-plane"></i>
-                </button>
-            </div>
-        </form>
+    <div id="login-wrapper">
+        <div class="form-container">
+            <a id="form-exit" href="/">
+                <div class="cross">
+                    <div id="line-1" class="cross-line"></div>
+                    <div id="line-2" class="cross-line"></div>
+                </div>
+            </a>
+            <span class="form-heading">Login</span>
+            <form action="login/">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" placeholder="Username ..." required>
+                    <span class="bar"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" placeholder="Email..." required>
+                    <span class="bar"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" placeholder="password..." required>
+                    <span class="bar"></span>
+                </div>
+                <div class="input-group">
+                    <button>
+                        <i class="fab fa-telegram-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock %}
