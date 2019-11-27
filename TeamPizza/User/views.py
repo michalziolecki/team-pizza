@@ -7,7 +7,19 @@ def log_form_view(request):
     return render(request, 'User/login.html', context)
 
 
-def login_view(request):
+def login(request):
     user = request.user
     context = {'user': user}
-    return render(request, 'User/login.html', context)
+    return render(request, 'TeamPizza/index.html', context)
+
+
+def sign_up_view(request):
+    user = request.user
+    context = {'user': user}
+    return render(request, 'User/register.html', context)
+
+
+def sign_up(request):
+    user = request.user
+    context = {'user': user}
+    return render(request, 'User/index.html', context)

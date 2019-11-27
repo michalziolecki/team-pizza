@@ -3,13 +3,31 @@
 {% block title %} Login to Team Pizza {% endblock %}
 
 {% block content %}
-    <div>
-        <form method="post" action="/user/login">
-            <label for="login">Username</label>
-            <input name="login" value="username" required>
-            <label for="password">Password</label>
-            <input type="password" value="password" required>
-            <button type="submit">Login</button>
+<div id="login-wrapper">
+    <div class="form-container">
+        <span class="form-heading">Login</span>
+        <form action="login/">
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" placeholder="Username ..." required>
+                <span class="bar"></span>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" placeholder="Email..." required>
+                <span class="bar"></span>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" placeholder="password..." required>
+                <span class="bar"></span>
+            </div>
+            <div class="input-group">
+                <button>
+                    <i class="fab fa-telegram-plane"></i>
+                </button>
+            </div>
         </form>
     </div>
+</div>
 {% endblock %}

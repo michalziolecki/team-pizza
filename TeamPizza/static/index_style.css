@@ -21,12 +21,14 @@ body {
 } */
 
 nav {
+	padding-top: 0;
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
 	min-height: 8vh;
 	font-family: 'Poppins', sans-serif;
-	background-color: #5d4954;
+	/* background-color: #5d4954; */
+	background: linear-gradient(to top, #5d4954,rgb(61, 54, 58));
 }
 
 .logo {
