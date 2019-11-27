@@ -5,6 +5,7 @@
 }
 
 body {
+	top: 6rem;
 	background-color: rgb(44, 39, 39);
 	background-image: url("pizza_background.jpg");
 	background-position: center center;
