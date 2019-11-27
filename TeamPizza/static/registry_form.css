@@ -1,11 +1,12 @@
 #wrapper {
     width: 90%;
-    height: 80vh;
+    height: 80%;
     margin: 0 auto;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 
 .form-container {
     font-family: 'Poppins', sans-serif;
@@ -145,12 +146,12 @@ form{
 
     /* .form-container::before{
         height: 10rem;
-    }
+    }*/
 
-    /* .form-heading{
+    /*.form-heading{
         left: 50%;
         transform: translateX(50%);
-    } */
+    }*/
 
     form{
         transform: initial; 

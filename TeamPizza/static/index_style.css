@@ -37,6 +37,13 @@ nav {
 	letter-spacing: 5px;
 	font-size: 20px;
 }
+.logo h4 a {
+	color: rgb(226, 226, 226);
+	text-transform: uppercase;
+	letter-spacing: 5px;
+	font-size: 20px;
+	text-decoration: none;
+}
 
 .nav-links {
 	display: flex;

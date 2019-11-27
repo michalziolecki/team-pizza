@@ -18,6 +18,7 @@ from .views import home_view, about_view
 
 urlpatterns = [
     path('', home_view, name='home'),
+    path('home/', home_view, name='home'),
     path('about/', about_view, name='about'),
     path('user/', include('User.urls'))
 

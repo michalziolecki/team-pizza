@@ -14,11 +14,11 @@
 <body>
 <nav class="navbar">
     <div class="logo">
-        <h4 href="/">Pizza Team</h4>
+        <h4> <a href="/">Pizza Team</a> </h4>
     </div>
     <ul class="nav-links">
         <li>
-            <a href="/">Home</a>
+            <a href="/home">Home</a>
         </li>
         <li>
             <a href="/about">About</a>
@@ -26,20 +26,21 @@
         <li>
             <a href="/order">Order</a>
         </li>
+        <li>
+            <a href="/history">History</a>
+        </li>
+        <li>
+            <a href="/user/sign-up-form">Register</a>
+        </li>
         {% if user.is_authenticated %}
-            <li>
-                <a href="/history">History</a>
-            </li>
-            <li>
-                <a href="/user/register">Register</a>
-            </li>
             <li>
                 <a href="/user/logout">Logout</a>
             </li>
+        {% else %}
+            <li>
+                <a href="/user/log-form">Login</a>
+            </li>
         {% endif %}
-        <li>
-            <a href="/user/log-form">Login</a>
-        </li>
     </ul>
     <div class="stack">
         <div class="line1"></div>
@@ -47,6 +48,9 @@
         <div class="line3"></div>
     </div>
 </nav>
+<br>
+<br>
+<br>
 {% block content %}
 {% endblock %}
 <script src="/static/main.js"></script>
