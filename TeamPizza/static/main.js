@@ -20,11 +20,4 @@ const navSlide = () => {
 	});
 }
 
-// const exitForms = () => {
-// 	const cross = document.querySelector('.cross');
-// 	cross.addEventListener('click', ()=>{
-// 		window.location='/home'
-// 	})
-// }
-
 navSlide();
