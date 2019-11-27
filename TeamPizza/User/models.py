@@ -14,7 +14,8 @@ class User(models.Model):
 
     name = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
-    mail = models.CharField(max_length=100)
+    nick_name = models.CharField(max_length=100, unique=True)
+    mail = models.CharField(max_length=100, unique=True)
     password_hash = models.CharField(max_length=100)
     role = models.CharField(max_length=1, choices=ROLES, default=USER)
 
