@@ -12,25 +12,44 @@
                 </div>
             </a>
             <span class="form-heading">Sign up</span>
-            <form action="/user/sign-up/" method="post">
+            <form action="/user/sign-up/" method="post">r
                 <div class="input-group">
                     <i class="fas fa-user"></i>
-                    <input type="text" placeholder="Username ..." required>
+                    <input name="name" type="text" placeholder="Name ..." required>
+                    <span class="bar"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input name="surname" type="text" placeholder="Surname ..." required>
+                    <span class="bar"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input name="nickname" type="text" placeholder="Nickname ..." required>
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-envelope"></i>
-                    <input type="email" placeholder="Email..." required>
+                    <input name="mail" type="email" placeholder="Email..." required>
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="Password..." required>
+                    <input name="password" type="password" placeholder="Password..." required>
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="Confirm password..." required>
+                    <input name="confirm_password" type="password" placeholder="Confirm password..." required>
+                    <span class="bar"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <select class="select-role" name="role">
+                        <option value="A">Admin</option>
+                        <option value="M">Moderator</option>
+                        <option value="U">User</option>
+                    </select>
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
