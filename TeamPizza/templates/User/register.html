@@ -12,7 +12,8 @@
                 </div>
             </a>
             <span class="form-heading">Sign up</span>
-            <form action="/user/sign-up/" method="post">r
+            <form action="/user/sign-up/" method="post">
+                {% csrf_token %}
                 <div class="input-group">
                     <i class="fas fa-user"></i>
                     <input name="name" type="text" placeholder="Name ..." required>

@@ -13,6 +13,7 @@
             </a>
             <span class="form-heading">Login</span>
             <form action="login/">
+                {% csrf_token %}
                 <div class="input-group">
                     <i class="fas fa-user"></i>
                     <input type="text" placeholder="Username ..." required>
