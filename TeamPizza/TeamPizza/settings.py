@@ -33,11 +33,11 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'format': '{name} - {asctime} - {module} - {levelname} {message}',
             'style': '{',
         },
         'basic': {
-            'format': '{levelname} {message}',
+            'format': '{name} - {levelname} {message}',
             'style': '{',
         },
     },
