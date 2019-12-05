@@ -47,22 +47,28 @@ def check_user_role(login: str) -> str:
     return role
 
 
-def hash_and_salt_password(password: str, salt_size=settings.SALT) -> str:
+def hash_and_salt_password(password: str) -> str:
     # creating salt
-    salt: str = hashlib.sha3_512(os.urandom(salt_size)).hexdigest()
+    random_size = 30
+    salt: str = hashlib.sha3_512(os.urandom(random_size)).hexdigest()
     encoded_salt: bytes = base64.b64encode(salt.encode('ascii'))
     base64_salt: str = str(encoded_salt, 'ascii')
 
     # hashing password
     pwd = ''.join([password, base64_salt])
-    hex_pwd = ''.join([hashlib.sha3_512(pwd).hexdigest(), base64_salt])
+    pwd_hash = hashlib.sha3_512(pwd.encode('ascii')).hexdigest()
+    hex_pwd = ''.join([pwd_hash, base64_salt])
     base64_pwd: bytes = base64.b64encode(hex_pwd.encode('ascii'))
-    pwd_hash: str = str(base64_pwd, 'ascii')
-    return pwd_hash
+    final_pwd_hash: str = str(base64_pwd, 'ascii')
+    return ''.join([final_pwd_hash, base64_salt])
 
 
-def verify_password(password: str, stored_password: str, salt_size=settings.SALT) -> str:
-    base64_salt: str = stored_password[-salt_size:]
-    encoded_salt: bytes = base64.b64decode(base64_salt)
-    salt: str = encoded_salt.decode('ascii')
-    return salt
+def verify_password(password: str, stored_password: str) -> bool:
+    salt_len = 172
+    base64_salt: str = stored_password[-salt_len:]
+    pwd = ''.join([password, base64_salt])
+    pwd_hash = hashlib.sha3_512(pwd.encode('ascii')).hexdigest()
+    hex_pwd = ''.join([pwd_hash, base64_salt])
+    base64_pwd: bytes = base64.b64encode(hex_pwd.encode('ascii'))
+    final_pwd_hash: str = str(base64_pwd, 'ascii')
+    return ''.join([final_pwd_hash, base64_salt]) == stored_password
