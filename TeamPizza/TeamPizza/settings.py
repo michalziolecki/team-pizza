@@ -72,8 +72,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'User.apps.TeamPizzaConfig'
+    'UserApp.apps.TeamPizzaConfig',
 ]
+
+AUTH_USER_MODEL = 'UserApp.PizzaUser'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -10,7 +10,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.db import Error as DB_Error
 from django.http.request import QueryDict
 
-from .models import User
+from .models import PizzaUser
 
 
 def is_usual_user_and_exist(login: str) -> tuple:
@@ -32,19 +32,26 @@ def is_usual_user_and_exist(login: str) -> tuple:
     return is_usual, exist
 
 
+def is_superuser_by_role(role: str) -> bool:
+    is_super_user = False
+    if role != 'U':
+        is_super_user = True
+    return is_super_user
+
+
 def check_user_role(login: str) -> str:
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     role = ''
 
     try:
-        user = User.objects.get(surname=login)
+        user = PizzaUser.objects.get(surname=login)
         role: str = user.role
     except ObjectDoesNotExist as ne:
         logger.info(f'User not found by login {ne.args}')
 
     if not role:
         try:
-            user = User.objects.get(mail=login)
+            user = PizzaUser.objects.get(mail=login)
             role = user.role
         except ObjectDoesNotExist as ne:
             logger.error(f'User not found by mail {ne.args}')
@@ -66,7 +73,8 @@ def hash_and_salt_password(password: str) -> str:
     hex_pwd = ''.join([pwd_hash, base64_salt])
     base64_pwd: bytes = base64.b64encode(hex_pwd.encode('ascii'))
     final_pwd_hash: str = str(base64_pwd, 'ascii')
-    return ''.join([final_pwd_hash, base64_salt])
+    password = ''.join([final_pwd_hash, base64_salt])
+    return password
 
 
 def verify_password(password: str, stored_password: str) -> bool:
@@ -91,13 +99,14 @@ def insert_new_user_into_db(request: WSGIRequest, logger: Logger) -> str:
             template = 'TeamPizza/password-not-confirmed.html'
         else:
             password_hash = hash_and_salt_password(params['password'])
-            new_user = User(
-                name=params['name'],
-                surname=params['surname'],
-                nick_name=params['nickname'],
-                mail=params['mail'],
-                password_hash=password_hash,
-                role=params['role']
+            new_user = PizzaUser(
+                username=params['nickname'],
+                first_name=params['name'],
+                last_name=params['surname'],
+                email=params['mail'],
+                password=password_hash,
+                role=params['role'],
+                is_superuser=is_superuser_by_role(params['role'])
             )
             new_user.save()
     except KeyError as ke:

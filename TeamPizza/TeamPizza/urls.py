@@ -21,6 +21,6 @@ urlpatterns = [
     path('home/', home_view, name='home'),
     path('login-required/', login_required, name='login_required'),
     path('about/', about_view, name='about'),
-    path('user/', include('User.urls'))
+    path('user/', include('UserApp.urls'))
 
 ]

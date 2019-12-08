@@ -4,5 +4,5 @@ USER = 'U'
 ROLES = [
     (ADMIN, 'Admin'),
     (MODERATOR, 'Moderator'),
-    (USER, 'User')
+    (USER, 'UserApp')
 ]

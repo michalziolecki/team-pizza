@@ -12,24 +12,27 @@
                 </div>
             </a>
             <span class="form-heading">Login</span>
-            <form action="login/">
+            <form action="/user/login/" method="post" enctype='application/json'>
                 {% csrf_token %}
                 <div class="input-group">
                     <i class="fas fa-user"></i>
-                    <input type="text" placeholder="Username ..." required>
+                    <input name="nickname" type="text" placeholder="Username ..." required>
                     <span class="bar"></span>
                 </div>
-                <div class="input-group">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" placeholder="Email..." required>
-                    <span class="bar"></span>
-                </div>
+{#                <div class="input-group">#}
+{#                    <i class="fas fa-envelope"></i>#}
+{#                    <input type="email" placeholder="Email..." required>#}
+{#                    <span class="bar"></span>#}
+{#                </div>#}
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="password..." required>
+                    <input name="password" type="password" placeholder="password..." required>
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
+                    {% if bad_params %}
+                        <p style="color: black">{{ bad_params }}</p>
+                    {% endif %}
                     <button>
                         <i class="fab fa-telegram-plane"></i>
                     </button>
