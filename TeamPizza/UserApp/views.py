@@ -10,7 +10,7 @@ from .models import PizzaUser
 from django.db import Error as DB_Error
 from .user_functions import is_usual_user_and_exist, insert_new_user_into_db, verify_password
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 
 def log_form_view(request: WSGIRequest):
@@ -57,14 +57,19 @@ def login_user(request: WSGIRequest):
     return render(request, template, context)
 
 
-# @login_required(login_url='/login-required')
+def logout_user(request: WSGIRequest):
+    logout(request)
+    return redirect('/')
+
+
+@login_required(login_url='/login-required')
 def sign_up_view(request: WSGIRequest):
     user = request.user
     context = {'user': user}
     return render(request, 'UserApp/register.html', context)
 
 
-# @login_required(login_url='/login-required')
+@login_required(login_url='/login-required')
 def sign_up(request: WSGIRequest) -> HttpResponse:
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user: SimpleLazyObject = request.user
