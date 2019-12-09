@@ -8,7 +8,8 @@ from django.utils.functional import SimpleLazyObject
 from django.http.request import QueryDict
 from .models import PizzaUser
 from django.db import Error as DB_Error
-from .user_functions import is_usual_user_and_exist, insert_new_user_into_db, verify_password
+from .user_functions import is_usual_user_and_exist, insert_new_user_into_db, verify_password, \
+    update_user_info_while_login, update_user_info_while_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 
@@ -37,19 +38,19 @@ def login_user(request: WSGIRequest):
         stored_pwd = ''
         log_user = ''
         if username and password:
-            log_user = PizzaUser.objects.get(username=username)
-            stored_pwd = log_user.password
-        if stored_pwd and verify_password(password=password, stored_password=stored_pwd):
-            logger.debug(f'request login verify password ok')
-            logger.debug(f'password: {stored_pwd}')
-            # auth_user = authenticate(request, username=username, password=stored_pwd)
-            logger.debug(f'authenticate status: {log_user}')
-            if log_user:
-                login(request, log_user)
-                context['user'] = log_user
-                template = 'TeamPizza/index.html'
-            else:
-                context['bad_params'] = 'Wrong login or password'
+            if PizzaUser.objects.filter(username=username).exists():
+                log_user = PizzaUser.objects.get(username=username)
+                stored_pwd = log_user.password
+            elif PizzaUser.objects.filter(email=username).exists():
+                log_user = PizzaUser.objects.get(email=username)
+                stored_pwd = log_user.password
+        if stored_pwd and log_user and verify_password(password=password, stored_password=stored_pwd):
+            logger.debug(f'request for login user and verify password: success')
+            update_user_info_while_login(log_user)
+            login(request, log_user)
+            context['user'] = log_user
+            template = 'TeamPizza/index.html'
+
         else:
             context['bad_params'] = 'Wrong login or password'
     else:
@@ -58,6 +59,7 @@ def login_user(request: WSGIRequest):
 
 
 def logout_user(request: WSGIRequest):
+    update_user_info_while_logout(request.user)
     logout(request)
     return redirect('/')
 

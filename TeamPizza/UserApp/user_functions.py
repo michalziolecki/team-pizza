@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.handlers.wsgi import WSGIRequest
 from django.db import Error as DB_Error
 from django.http.request import QueryDict
+from django.utils import timezone
 
 from .models import PizzaUser
 
@@ -44,14 +45,14 @@ def check_user_role(login: str) -> str:
     role = ''
 
     try:
-        user = PizzaUser.objects.get(surname=login)
+        user = PizzaUser.objects.get(username=login)
         role: str = user.role
     except ObjectDoesNotExist as ne:
         logger.info(f'User not found by login {ne.args}')
 
     if not role:
         try:
-            user = PizzaUser.objects.get(mail=login)
+            user = PizzaUser.objects.get(email=login)
             role = user.role
         except ObjectDoesNotExist as ne:
             logger.error(f'User not found by mail {ne.args}')
@@ -92,7 +93,7 @@ def insert_new_user_into_db(request: WSGIRequest, logger: Logger) -> str:
     user = request.user
     post_body: QueryDict = request.POST
     params: dict = post_body.dict()
-    template = 'sign-up-success.html'
+    template = 'UserApp/sign-up-success.html'
 
     try:
         if params['password'] != params['confirm_password']:
@@ -123,3 +124,20 @@ def insert_new_user_into_db(request: WSGIRequest, logger: Logger) -> str:
         template = 'TeamPizza/method-error.html'
 
     return template
+
+
+def update_user_info_while_login(user: PizzaUser):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    try:
+        PizzaUser.objects.filter(pk=user.pk).update(is_active=True,
+                                                    last_login=timezone.now())
+    except DB_Error as db_err:
+        logger.error(f'Update user fields while login failed ! info: {db_err.args}')
+
+
+def update_user_info_while_logout(user: PizzaUser):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    try:
+        PizzaUser.objects.filter(pk=user.pk).update(is_active=False)
+    except DB_Error as db_err:
+        logger.error(f'Update user fields while logout failed ! info: {db_err.args}')
