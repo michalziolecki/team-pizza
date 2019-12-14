@@ -15,9 +15,6 @@ class PizzaUser(AbstractUser):
     ]
 
     username = models.CharField(max_length=100, unique=True)
-    # first_name = models.CharField(max_length=100)
-    # last_name = models.CharField(max_length=100)
-    # email = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=572)
     role = models.CharField(max_length=1, choices=ROLES, default=USER)
 

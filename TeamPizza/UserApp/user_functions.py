@@ -11,7 +11,7 @@ from django.db import Error as DB_Error
 from django.http.request import QueryDict
 from django.utils import timezone
 
-from .models import PizzaUser
+from .models import PizzaUser, LoginInformation
 
 
 def is_usual_user_and_exist(login: str) -> tuple:
@@ -126,18 +126,41 @@ def insert_new_user_into_db(request: WSGIRequest, logger: Logger) -> str:
     return template
 
 
-def update_user_info_while_login(user: PizzaUser):
+def update_user_info_while_login(request: WSGIRequest, user: PizzaUser):
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     try:
-        PizzaUser.objects.filter(pk=user.pk).update(is_active=True,
-                                                    last_login=timezone.now())
+        PizzaUser.objects.filter(username=user.username).update(is_active=True,
+                                                                last_login=timezone.now())
+        logger.info('Update user object success while login!')
+        last_log_ip = get_client_ip(request)
+        if last_log_ip:
+            db_user = PizzaUser.objects.filter(username=user.username).get()
+            last_log_info = LoginInformation(user=db_user, last_login=timezone.now(), ip_login=last_log_ip)
+            last_log_info.save()
+            logger.info('Added user login information history success!')
+        else:
+            logger.warning('IP address of user not found!')
     except DB_Error as db_err:
-        logger.error(f'Update user fields while login failed ! info: {db_err.args}')
+        logger.error(f'Update user fields while login or login information entity failed ! info: {db_err.args}')
+    except BaseException as be:
+        logger.error(f'Update user entities while login failed ! Base exception cached info: {be.args}')
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 
 def update_user_info_while_logout(user: PizzaUser):
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     try:
-        PizzaUser.objects.filter(pk=user.pk).update(is_active=False)
+        PizzaUser.objects.filter(username=user.username).update(is_active=False)
+        logger.info('Update user object success while logout!')
     except DB_Error as db_err:
         logger.error(f'Update user fields while logout failed ! info: {db_err.args}')
+    except BaseException as be:
+        logger.error(f'Update user while logout failed ! Base exception cached info: {be.args}')

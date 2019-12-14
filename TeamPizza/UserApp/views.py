@@ -46,11 +46,10 @@ def login_user(request: WSGIRequest):
                 stored_pwd = log_user.password
         if stored_pwd and log_user and verify_password(password=password, stored_password=stored_pwd):
             logger.debug(f'request for login user and verify password: success')
-            update_user_info_while_login(log_user)
+            update_user_info_while_login(request, log_user)
             login(request, log_user)
             context['user'] = log_user
             template = 'TeamPizza/index.html'
-
         else:
             context['bad_params'] = 'Wrong login or password'
     else:
