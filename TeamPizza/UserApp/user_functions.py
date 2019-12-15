@@ -97,7 +97,7 @@ def insert_new_user_into_db(request: WSGIRequest, logger: Logger) -> str:
 
     try:
         if params['password'] != params['confirm_password']:
-            template = 'TeamPizza/password-not-confirmed.html'
+            template = 'UserApp/password-not-confirmed.html'
         else:
             password_hash = hash_and_salt_password(params['password'])
             new_user = PizzaUser(
