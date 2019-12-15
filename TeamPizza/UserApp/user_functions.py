@@ -132,7 +132,7 @@ def update_user_info_while_login(request: WSGIRequest, user: PizzaUser):
         PizzaUser.objects.filter(username=user.username).update(is_active=True,
                                                                 last_login=timezone.now())
         logger.info('Update user object success while login!')
-        last_log_ip = get_client_ip(request)
+        last_log_ip = get_client_ip(request, user)
         if last_log_ip:
             db_user = PizzaUser.objects.filter(username=user.username).get()
             last_log_info = LoginInformation(user=db_user, last_login=timezone.now(), ip_login=last_log_ip)
@@ -146,9 +146,14 @@ def update_user_info_while_login(request: WSGIRequest, user: PizzaUser):
         logger.error(f'Update user entities while login failed ! Base exception cached info: {be.args}')
 
 
-def get_client_ip(request):
+def get_client_ip(request: WSGIRequest, user: PizzaUser):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    real_ip = request.META.get('HTTP_X_REAL_IP')
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
+    logger.info(f'User {user.username}, log to service with forwarded addresses: {x_forwarded_for}')
+    if real_ip:
+        ip = real_ip
+    elif x_forwarded_for:
         ip = x_forwarded_for.split(',')[0]
     else:
         ip = request.META.get('REMOTE_ADDR')
