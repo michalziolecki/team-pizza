@@ -16,36 +16,36 @@
                 {% csrf_token %}
                 <div class="input-group">
                     <i class="fas fa-user"></i>
-                    <input name="name" type="text" placeholder="Name ..." required>
+                    <input id="signupName" name="name" type="text" placeholder="Name ..." required>
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-user"></i>
-                    <input name="surname" type="text" placeholder="Surname ..." required>
+                    <input id="signupSurname" name="surname" type="text" placeholder="Surname ..." required>
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-user"></i>
-                    <input name="nickname" type="text" placeholder="Nickname ..." required>
+                    <input id="signupNickName" name="nickname" type="text" placeholder="Nickname ..." required>
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-envelope"></i>
-                    <input name="mail" type="email" placeholder="Email..." required>
+                    <input id="signupMail" name="mail" type="email" placeholder="Email..." required>
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input name="password" type="password" placeholder="Password..." required>
+                    <input id="signupPwd" name="password" type="password" placeholder="Password..." required>
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input name="confirm_password" type="password" placeholder="Confirm password..." required>
+                    <input id="signupConfPwd" name="confirm_password" type="password" placeholder="Confirm password..." required>
                     <span class="bar"></span>
                 </div>
-                <div class="input-group">
-                    <i class="fas fa-lock"></i>
+                <div class="input-group"> 
+                    <i class="fas fa-check-square"></i>
                     <select class="select-role" name="role">
                         <option value="A">Admin</option>
                         <option value="M">Moderator</option>
@@ -54,12 +54,12 @@
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
-                    <button>
+                    <button id="signupButton">
                         <i class="fab fa-telegram-plane"></i>
                     </button>
                 </div>
                 <div class="switch-login">
-                    <a href="log-form/">Already have an account? <span>Login</span></a>
+                    <a href="/user/log-form/">Already have an account? <span>Login</span></a>
                 </div>
             </form>
         </div>

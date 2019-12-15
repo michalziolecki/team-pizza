@@ -7,7 +7,7 @@
     align-items: center;
 }
 
-#login-wrapper{
+#login-wrapper {
     width: 90%;
     height: 80%;
     margin: 0 auto;
@@ -30,7 +30,7 @@
     z-index: 1;
 }
 
-.form-container::before{
+.form-container::before {
     content: '';
     position: absolute;
     top: 0;
@@ -38,13 +38,13 @@
     width: 100%;
     height: 40rem;
     border-radius: 1rem;
-    background: linear-gradient(to bottom, #5d4954,rgb(61, 54, 58));
+    background: linear-gradient(to bottom, #5d4954, rgb(61, 54, 58));
     border-bottom-right-radius: 30%;
     /* border-bottom-left-radius: 50%; */
     z-index: -1;
 }
 
-.cross{
+.cross {
     position: absolute;
     top: 2.5rem;
     /*left: 35rem;*/
@@ -53,32 +53,32 @@
     z-index: 2;
 }
 
-.cross div{
+.cross div {
     /*background-color: rgb(226, 226, 226);*/
     /*transition: all 0.3 ease;*/
 }
 
-.cross-line{
+.cross-line {
     width: 25px;
-	height: 5px;
+    height: 5px;
     margin: 5px;
-	/*transition: all 0.3 ease;*/
+    /*transition: all 0.3 ease;*/
     background-color: rgb(226, 226, 226);
 }
 
-#line-1{
+#line-1 {
     transform: rotate(-45deg) translate(-1px, 1px);
 }
 
-#line-2{
+#line-2 {
     transform: rotate(45deg) translate(-6px, -6px);
 }
 
-#form-exit{
+#form-exit {
     cursor: pointer;
 }
 
-.form-heading{
+.form-heading {
     color: rgb(226, 226, 226);
     font-size: 2.5rem;
     position: absolute;
@@ -86,7 +86,7 @@
     left: 10rem;
 }
 
-form{
+form {
     transform: translateX(10rem);
     padding: 2rem 0;
     /* background: linear-gradient(to top, #5d4954,rgb(61, 54, 58)); */
@@ -96,13 +96,13 @@ form{
     width: 60%;
 }
 
-.input-group{
+.input-group {
     width: 90%;
     margin: 0 auto;
     position: relative;
     display: flex;
     align-items: baseline;
-    color:  rgb(226, 226, 226);
+    color: rgb(226, 226, 226);
 }
 
 .input-group input {
@@ -123,7 +123,7 @@ form{
     color: black;
 }
 
-.input-group .bar{
+.input-group .bar {
     position: absolute;
     left: 0;
     bottom: 0;
@@ -132,7 +132,7 @@ form{
     height: 1px;
 }
 
-.input-group .bar::before{
+.input-group .bar::before {
     content: '';
     position: absolute;
     background-color: rgba(0, 0, 0, 1);
@@ -141,14 +141,14 @@ form{
     transition: width 650ms;
 }
 
-.input-group input:focus + .bar::before{
+.input-group input:focus + .bar::before {
     width: 100%;
 }
 
-.input-group button{
+.input-group button {
     margin: 3rem auto;
     padding: 1rem 5rem;
-    background: linear-gradient(to top, #5d4954,rgb(61, 54, 58));
+    background: linear-gradient(to top, #5d4954, rgb(61, 54, 58));
     border: none;
     color: #fff;
     font-size: 1.5rem;
@@ -157,47 +157,64 @@ form{
 }
 
 .input-group button:focus,
-.input-group button:hover{
-    background: linear-gradient(to bottom, #5d4954,rgb(61, 54, 58));
+.input-group button:hover {
+    background: linear-gradient(to bottom, #5d4954, rgb(61, 54, 58));
 }
 
-.switch-login{
+.switch-login {
     text-align: center;
 }
 
-.switch-login a{
+.switch-login a {
     text-decoration: none;
     color: rgb(43, 39, 41);
     /* font-size: 1.5rem; */
 }
 
-.switch-login a span{
+.switch-login a span {
     color: #63565d;
 }
 
-.switch-login a span:hover{
+.switch-login a span:hover {
     padding-bottom: 2px;
     border-bottom: 2px solid #63565d;
 }
 
-@media screen and (max-width: 786px){
+@media screen and (max-width: 786px) {
 
-    .form-heading{
-        transform: initial; 
+    .form-heading {
+        transform: initial;
         left: 10%;
     }
 
     /* .form-container::before{
         height: 10rem;
     }*/
-
     /*.form-heading{
         left: 50%;
         transform: translateX(50%);
     }*/
-
-    form{
-        transform: initial; 
+    form {
+        transform: initial;
     }
 
+}
+
+.select-role {
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+    width: 80%;
+    height: 2rem;
+    border: none;
+    background-color: rgb(226, 226, 226);
+    font-size: 1rem;
+}
+
+.select-role option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(226, 226, 226);
+    height: 2rem;
+    font-size: 1rem;
 }
