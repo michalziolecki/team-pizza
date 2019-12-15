@@ -48,8 +48,7 @@ def login_user(request: WSGIRequest):
             logger.debug(f'request for login user and verify password: success')
             update_user_info_while_login(request, log_user)
             login(request, log_user)
-            context['user'] = log_user
-            template = 'TeamPizza/index.html'
+            return redirect('/')
         else:
             context['bad_params'] = 'Wrong login or password'
     else:
