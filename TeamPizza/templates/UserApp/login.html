@@ -16,24 +16,19 @@
                 {% csrf_token %}
                 <div class="input-group">
                     <i class="fas fa-user"></i>
-                    <input name="nickname" type="text" placeholder="Username or email ..." required>
+                    <input title="min. 6 characters a-zA-Z0-9" id="loginNickname" name="nickname" type="text" placeholder="Username or email ..." required>
                     <span class="bar"></span>
                 </div>
-{#                <div class="input-group">#}
-{#                    <i class="fas fa-envelope"></i>#}
-{#                    <input type="email" placeholder="Email..." required>#}
-{#                    <span class="bar"></span>#}
-{#                </div>#}
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input name="password" type="password" placeholder="password..." required>
+                    <input title="min. 9 characters" id="loginPassword" name="password" type="password" placeholder="password..." required>
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
                     {% if bad_params %}
                         <p style="color: black">{{ bad_params }}</p>
                     {% endif %}
-                    <button>
+                    <button id="loginButton">
                         <i class="fab fa-telegram-plane"></i>
                     </button>
                 </div>
