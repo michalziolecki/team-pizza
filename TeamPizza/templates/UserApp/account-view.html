@@ -23,26 +23,6 @@
                     <form class="update-account-form" action="/user/update-account/" method="post"
                           enctype='application/json'>
                         {% csrf_token %}
-                        <!-- <div class="input-group">
-                            <i class="fas fa-user"></i>
-                            <input id="signupName" name="name" type="text" placeholder="Name ..." required>
-                            <span class="bar"></span>
-                        </div>
-                        <div class="input-group">
-                            <i class="fas fa-user"></i>
-                            <input id="signupSurname" name="surname" type="text" placeholder="Surname ..." required>
-                            <span class="bar"></span>
-                        </div> -->
-                        <!-- <div class="input-group">
-                            <i class="fas fa-user"></i>
-                            <input id="signupNickName" name="nickname" type="text" placeholder="Nickname ... can be empty" required>
-                            <span class="bar"></span>
-                        </div>  -->
-                        <!-- <div class="input-group">
-                            <i class="fas fa-envelope"></i>
-                            <input id="signupMail" name="mail" type="email" placeholder="Email..." required>
-                            <span class="bar"></span>
-                        </div> -->
                         <div class="input-group">
                             <i class="fas fa-lock"></i>
                             <input id="signupPwd" name="password" type="password" placeholder="Password..." required>
@@ -55,15 +35,6 @@
                                    required>
                             <span class="bar"></span>
                         </div>
-                        <!-- <div class="input-group">
-                            <i class="fas fa-check-square"></i>
-                            <select class="select-role" name="role">
-                                <option value="A">Admin</option>
-                                <option value="M">Moderator</option>
-                                <option value="U">User</option>
-                            </select>
-                            <span class="bar"></span>
-                        </div> -->
                         <div class="input-group">
                             <button id="updateButton">
                                 <i class="fab fa-telegram-plane"></i>

@@ -16,12 +16,7 @@ const changeDivToUpdate = () => {
     removeContentTab.style.display = "none";
 
     createBackgroundTabColor('#ccc', '', '');
-    // var updateTab = document.getElementById('update-tab');
-    // var securityTab = document.getElementById('security-tab');
-    // var removeTab = document.getElementById('remove-tab');
-    // updateTab.style.backgroundColor = '#ccc';
-    // securityTab.style.backgroundColor = '';
-    // removeTab.style.backgroundColor = '';
+
 };
 
 const changeDivToSecurity = () => {
@@ -34,12 +29,6 @@ const changeDivToSecurity = () => {
 
     createBackgroundTabColor('', '#ccc', '');
 
-    // var updateTab = document.getElementById('update-tab');
-    // var securityTab = document.getElementById('security-tab');
-    // var removeTab = document.getElementById('remove-tab');
-    // updateTab.style.backgroundColor = '';
-    // securityTab.style.backgroundColor = '#ccc';
-    // removeTab.style.backgroundColor = '';
 };
 
 const changeDivToRemove = () => {
@@ -52,11 +41,5 @@ const changeDivToRemove = () => {
 
     createBackgroundTabColor('', '', '#ccc');
 
-    // var updateTab = document.getElementById('update-tab');
-    // var securityTab = document.getElementById('security-tab');
-    // var removeTab = document.getElementById('remove-tab');
-    // updateTab.style.backgroundColor = '';
-    // securityTab.style.backgroundColor = '';
-    // removeTab.style.backgroundColor = '#ccc';
 };
 
