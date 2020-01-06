@@ -268,7 +268,7 @@
     width: 60%;
 }
 
-.tab-window{
+.tab-window {
     transform: translateX(2rem);
     position: relative;
     padding: 2rem 0;
@@ -278,16 +278,29 @@
     border-radius: 2rem;
 }
 
-.tabs-account{
+.tabs-account {
+    font-size: 2rem;
+    overflow: hidden;
+    padding: 1rem;
+    /*border: 1px solid rgb(226, 226, 226);*/
+    /*background-color: #f1f1f1;*/
+}
+
+.tabs-account button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
     font-size: 2rem;
 }
 
-.tabs-account a{
-    padding-left: 1rem;
-    display: inline-block;
-    text-decoration: none;
-    padding-right: 1rem;
-    color: black;
-    box-shadow: 0 1px 1rem rgba(0, 0, 0, 1);
-    border-radius: 1rem;
+.tabs-account button:hover {
+    background-color: #ddd;
+}
+
+.tabs-account button:link {
+    background-color: #ccc;
 }

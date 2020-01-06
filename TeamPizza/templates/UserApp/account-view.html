@@ -15,11 +15,11 @@
             <span class="form-heading">User Account</span>
             <div class="tab-window">
                 <div class="tabs-account">
-                    <a style="cursor: pointer" id="update-tab" onclick="changeDivToUpdate()">Update</a>
-                    <a style="cursor: pointer" id="remove-tab" onclick="changeDivToRemove()">Remove</a>
-                    <a style="cursor: pointer" id="security-tab" onclick="changeDivToSecurity()">Security</a>
+                    <button style="cursor: pointer; background-color: #ccc" id="update-tab" onclick="changeDivToUpdate()">Update</button>
+                    <button style="cursor: pointer" id="remove-tab" onclick="changeDivToRemove()">Remove</button>
+                    <button style="cursor: pointer; border-right: none" id="security-tab" onclick="changeDivToSecurity()">Security</button>
                 </div>
-                <div id="update-user-form">
+                <div id="update-user-form" style="display: block">
                     <form class="update-account-form" action="/user/update-account/" method="post"
                           enctype='application/json'>
                         {% csrf_token %}
@@ -77,7 +77,7 @@
                         {% csrf_token %}
                         <div class="input-group">
                             <i class="fas fa-trash"></i>
-                            <a style="color: black">Remove:</a>
+                            <a style="color: black">Account:</a>
                             <input name="removeCheckBox" type="checkbox" required>
                         </div>
                         <div class="input-group">
