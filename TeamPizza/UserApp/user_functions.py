@@ -169,3 +169,23 @@ def update_user_info_while_logout(user: PizzaUser):
         logger.error(f'Update user fields while logout failed ! info: {db_err.args}')
     except BaseException as be:
         logger.error(f'Update user while logout failed ! Base exception cached info: {be.args}')
+
+
+def get_last_user_login(user: PizzaUser) -> list:
+    db_user = get_user_from_db(user.username)
+    login_list = []
+    if db_user:
+        login_list = LoginInformation.objects.filter(user=db_user).order_by('-last_login')[:10]
+    return login_list
+
+
+def get_user_from_db(username) -> PizzaUser:
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    db_user = None
+    try:
+        db_user = PizzaUser.objects.filter(username=username).get()
+    except DB_Error as db_err:
+        logger.error(f'Getting user from database failed ! info: {db_err.args}')
+    except BaseException as be:
+        logger.error(f'Getting user from database failed ! Base exception cached info: {be.args}')
+    return db_user

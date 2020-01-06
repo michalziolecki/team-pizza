@@ -15,9 +15,13 @@
             <span class="form-heading">User Account</span>
             <div class="tab-window">
                 <div class="tabs-account">
-                    <button style="cursor: pointer; background-color: #ccc" id="update-tab" onclick="changeDivToUpdate()">Update</button>
+                    <button style="cursor: pointer; background-color: #ccc" id="update-tab"
+                            onclick="changeDivToUpdate()">Update
+                    </button>
                     <button style="cursor: pointer" id="remove-tab" onclick="changeDivToRemove()">Remove</button>
-                    <button style="cursor: pointer; border-right: none" id="security-tab" onclick="changeDivToSecurity()">Security</button>
+                    <button style="cursor: pointer; border-right: none" id="security-tab"
+                            onclick="changeDivToSecurity()">Security
+                    </button>
                 </div>
                 <div id="update-user-form" style="display: block">
                     <form class="update-account-form" action="/user/update-account/" method="post"
@@ -36,6 +40,15 @@
                             <span class="bar"></span>
                         </div>
                         <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input id="signupPwd" name="old_password" type="password" placeholder="Old Password..."
+                                   required>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group">
+                            {% if bad_pwd_params %}
+                                <a style="color: black">{{ bad_pwd_params }}</a>
+                            {% endif %}
                             <button id="updateButton">
                                 <i class="fab fa-telegram-plane"></i>
                             </button>
@@ -49,9 +62,18 @@
                         <div class="input-group">
                             <i class="fas fa-trash"></i>
                             <a style="color: black">Account:</a>
-                            <input name="removeCheckBox" type="checkbox" required>
+                            <input name="removeCheckbox" type="checkbox" required>
                         </div>
                         <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input id="signupPwd" name="password" type="password" placeholder="Password..."
+                                   required>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group">
+                            {% if bad_rm_params %}
+                                <a style="color: black">{{ bad_rm_params }}</a>
+                            {% endif %}
                             <button id="removeButton">
                                 <i class="fab fa-telegram-plane"></i>
                             </button>
@@ -69,8 +91,8 @@
                         {% for login in login_list %}
                             <tr>
                                 <td>{{ login.id }}</td>
-                                <td>{{ login.ip }}</td>
-                                <td>{{ login.date }}</td>
+                                <td>{{ login.ip_login }}</td>
+                                <td>{{ login.last_login }}</td>
                             </tr>
                         {% endfor %}
                     </table>

@@ -15,6 +15,13 @@ def about_view(request):
     return render(request, 'TeamPizza/about.html', context)
 
 
+# @login_required(login_url='/login-required')
+def operation_success(request):
+    user = request.user
+    context = {'user': user}
+    return render(request, 'TeamPizza/operation-success.html', context)
+
+
 def login_required(request):
     user = request.user
     context = {'user': user}
