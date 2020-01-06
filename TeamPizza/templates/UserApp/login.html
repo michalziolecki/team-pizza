@@ -3,6 +3,7 @@
 {% block title %} Login to Team Pizza {% endblock %}
 
 {% block content %}
+    <script src="/static/parse_login_form.js"></script>
     <div id="login-wrapper">
         <div class="form-container">
             <a id="form-exit" href="/">
@@ -12,7 +13,7 @@
                 </div>
             </a>
             <span class="form-heading">Login</span>
-            <form action="/user/login/" method="post" enctype='application/json'>
+            <form class="register-form" action="/user/login/" method="post" enctype='application/json'>
                 {% csrf_token %}
                 <div class="input-group">
                     <i class="fas fa-user"></i>

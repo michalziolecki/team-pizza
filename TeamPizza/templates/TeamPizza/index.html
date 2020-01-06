@@ -24,15 +24,15 @@
             <a href="/about">About</a>
         </li>
         {% if user.is_authenticated %}
-        <li>
-            <a href="/order">Order</a>
-        </li>
-        <li>
-            <a href="/history">Account</a>
-        </li>
-        <li>
-            <a href="/user/sign-up-form">Register</a>
-        </li>
+            <li>
+                <a href="/order">Order</a>
+            </li>
+            <li>
+                <a href="/user/sign-up-form">Register</a>
+            </li>
+            <li>
+                <a href="/user/account">Account</a>
+            </li>
             <li>
                 <a href="/user/logout">Logout</a>
             </li>
@@ -54,5 +54,6 @@
 {% block content %}
 {% endblock %}
 <script src="/static/main.js"></script>
+<script src="/static/change_div_content.js"></script>
 </body>
 </html>

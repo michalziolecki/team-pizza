@@ -90,3 +90,30 @@ def sign_up(request: WSGIRequest) -> HttpResponse:
         return render(request, 'TeamPizza/not-authenticated.html', context)
     else:
         return render(request, 'TeamPizza/bad-method.html', context)
+
+
+@login_required(login_url='/login-required')
+def account_view(request):
+    user = request.user
+    context = {'user': user}
+    return render(request, 'UserApp/account-view.html', context)
+
+
+@login_required(login_url='/login-required')
+def account_security_view(request):
+    pass
+
+
+@login_required(login_url='/login-required')
+def update_account(request):
+    pass
+
+
+@login_required(login_url='/login-required')
+def delete_account(request):
+    pass
+
+
+@login_required(login_url='/login-required')
+def security_account(request):
+    pass

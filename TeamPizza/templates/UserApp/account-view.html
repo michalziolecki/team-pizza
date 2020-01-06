@@ -1,0 +1,110 @@
+{% extends "../TeamPizza/index.html" %}
+
+{% block title %} Sign up to Team Pizza {% endblock %}
+
+{% block content %}
+
+    <div id="account-wrapper">
+        <div class="form-account-container">
+            <a id="form-exit" href="/">
+                <div class="cross">
+                    <div id="line-1" class="cross-line"></div>
+                    <div id="line-2" class="cross-line"></div>
+                </div>
+            </a>
+            <span class="form-heading">User Account</span>
+            <div class="tab-window">
+                <div class="tabs-account">
+                    <a style="cursor: pointer" id="update-tab" onclick="changeDivToUpdate()">Update</a>
+                    <a style="cursor: pointer" id="remove-tab" onclick="changeDivToRemove()">Remove</a>
+                    <a style="cursor: pointer" id="security-tab" onclick="changeDivToSecurity()">Security</a>
+                </div>
+                <div id="update-user-form">
+                    <form class="update-account-form" action="/user/update-account/" method="post"
+                          enctype='application/json'>
+                        {% csrf_token %}
+                        <!-- <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input id="signupName" name="name" type="text" placeholder="Name ..." required>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input id="signupSurname" name="surname" type="text" placeholder="Surname ..." required>
+                            <span class="bar"></span>
+                        </div> -->
+                        <!-- <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input id="signupNickName" name="nickname" type="text" placeholder="Nickname ... can be empty" required>
+                            <span class="bar"></span>
+                        </div>  -->
+                        <!-- <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input id="signupMail" name="mail" type="email" placeholder="Email..." required>
+                            <span class="bar"></span>
+                        </div> -->
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input id="signupPwd" name="password" type="password" placeholder="Password..." required>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input id="signupConfPwd" name="confirm_password" type="password"
+                                   placeholder="Confirm password..."
+                                   required>
+                            <span class="bar"></span>
+                        </div>
+                        <!-- <div class="input-group">
+                            <i class="fas fa-check-square"></i>
+                            <select class="select-role" name="role">
+                                <option value="A">Admin</option>
+                                <option value="M">Moderator</option>
+                                <option value="U">User</option>
+                            </select>
+                            <span class="bar"></span>
+                        </div> -->
+                        <div class="input-group">
+                            <button id="updateButton">
+                                <i class="fab fa-telegram-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div id="delete-user-form" style="display: none">
+                    <form class="remove-account-form" action="/user/remove-account/" method="post"
+                          enctype='application/json'>
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <i class="fas fa-trash"></i>
+                            <a style="color: black">Remove:</a>
+                            <input name="removeCheckBox" type="checkbox" required>
+                        </div>
+                        <div class="input-group">
+                            <button id="removeButton">
+                                <i class="fab fa-telegram-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div id="last-login-table" style="display: none">
+                    <br>
+                    <table style="width:90%; text-align: center">
+                        <tr>
+                            <th>Id</th>
+                            <th>IP address</th>
+                            <th>Date</th>
+                        </tr>
+                        {% for login in login_list %}
+                            <tr>
+                                <td>{{ login.id }}</td>
+                                <td>{{ login.ip }}</td>
+                                <td>{{ login.date }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

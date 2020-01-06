@@ -3,8 +3,9 @@
 {% block title %} Sign up to Team Pizza {% endblock %}
 
 {% block content %}
-    <div id="wrapper">
-        <div class="form-container">
+    <script src="/static/parse_sign_up_form.js"></script>
+    <div id="account-wrapper">
+        <div class="form-account-container">
             <a id="form-exit" href="/">
                 <div class="cross">
                     <div id="line-1" class="cross-line"></div>
@@ -12,7 +13,7 @@
                 </div>
             </a>
             <span class="form-heading">Sign up</span>
-            <form action="/user/sign-up/" method="post" enctype='application/json'>
+            <form class="register-form" action="/user/sign-up/" method="post" enctype='application/json'>
                 {% csrf_token %}
                 <div class="input-group">
                     <i class="fas fa-user"></i>
@@ -58,9 +59,9 @@
                         <i class="fab fa-telegram-plane"></i>
                     </button>
                 </div>
-                <div class="switch-login">
-                    <a href="/user/log-form/">Already have an account? <span>Login</span></a>
-                </div>
+                <!-- <div class="switch-login"> -->
+                    <!-- <a href="/user/log-form/">Already have an account? <span>Login</span></a> -->
+                <!-- </div> -->
             </form>
         </div>
     </div>
