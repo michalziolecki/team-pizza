@@ -15,6 +15,7 @@ from .user_functions import is_usual_user_and_exist, insert_new_user_into_db, ve
     hash_and_salt_password, get_user_from_db
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+import re
 
 
 def log_form_view(request: WSGIRequest):
@@ -128,9 +129,10 @@ def update_account(request):
                          f'  info: {ke.args}')
 
         db_user = get_user_from_db(user.username)
+        pwd_regex = re.compile('.{9,}')
 
         if old_password and verify_password(old_password, db_user.password):
-            if password and confirmed_password and password == confirmed_password:
+            if password and confirmed_password and password == confirmed_password and pwd_regex.match(password):
                 password_hash = hash_and_salt_password(password)
                 try:
                     PizzaUser.objects.filter(username=user.username).update(password=password_hash)

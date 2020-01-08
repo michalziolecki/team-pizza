@@ -10,6 +10,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.db import Error as DB_Error
 from django.http.request import QueryDict
 from django.utils import timezone
+import re
 
 from .models import PizzaUser, LoginInformation
 
@@ -94,9 +95,10 @@ def insert_new_user_into_db(request: WSGIRequest, logger: Logger) -> str:
     post_body: QueryDict = request.POST
     params: dict = post_body.dict()
     template = 'UserApp/sign-up-success.html'
+    pwd_regex = re.compile('.{9,}')
 
     try:
-        if params['password'] != params['confirm_password']:
+        if params['password'] != params['confirm_password'] or not pwd_regex.match(params['password']):
             template = 'UserApp/password-not-confirmed.html'
         else:
             password_hash = hash_and_salt_password(params['password'])
