@@ -2,8 +2,8 @@
 
 {% block title %} Sign up to Team Pizza {% endblock %}
 
+
 {% block content %}
-    <script src="/static/parse_sign_up_form.js"></script>
     <div id="account-wrapper">
         <div class="form-account-container">
             <a id="form-exit" href="/">
@@ -42,10 +42,11 @@
                 </div>
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input id="signupConfPwd" name="confirm_password" type="password" placeholder="Confirm password..." required>
+                    <input id="signupConfPwd" name="confirm_password" type="password" placeholder="Confirm password..."
+                           required>
                     <span class="bar"></span>
                 </div>
-                <div class="input-group"> 
+                <div class="input-group">
                     <i class="fas fa-check-square"></i>
                     <select class="select-role" name="role">
                         <option value="A">Admin</option>
@@ -60,9 +61,10 @@
                     </button>
                 </div>
                 <!-- <div class="switch-login"> -->
-                    <!-- <a href="/user/log-form/">Already have an account? <span>Login</span></a> -->
+                <!-- <a href="/user/log-form/">Already have an account? <span>Login</span></a> -->
                 <!-- </div> -->
             </form>
         </div>
     </div>
+    <script src="/static/parse_sign_up_form.js"></script>
 {% endblock %}

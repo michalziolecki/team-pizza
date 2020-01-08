@@ -1,6 +1,6 @@
 const checkSignForm = () => {
 
-    var signupButton = document.getElementById('signupButton');
+    const signupButton = document.getElementById('signupButton');
 	console.log('signupButton click event start');
     signupButton.addEventListener('click', () => {
         console.log('signupButton click event start');
@@ -19,13 +19,15 @@ const checkSignForm = () => {
         const signupPwd = document.getElementById('signupPwd').value;
         const signupConfPwd = document.getElementById('signupConfPwd').value;
 
-        var surnameExp = new RegExp('[a-zA-Z0-9]{3,}');
-        var nicknameExp = new RegExp('[a-zA-Z0-9]{6,}');
-        var emailExp = new RegExp('^\\S+@\\S+$');
-        var pwdExp = new RegExp('.{9,}');
+        const surnameExp = new RegExp('[a-zA-Z0-9]{3,}');
+        const nicknameExp = new RegExp('[a-zA-Z0-9]{6,}');
+        const emailExp = new RegExp('^\\S+@\\S+$');
+        const pwdExp = new RegExp('.{9,}');
 
         if (signupPwd !== signupConfPwd) {
             alert(confirmPwdError);
+            event.preventDefault();
+            return false;
         }
 
         if (!(surnameExp.test(signupName)) ||
@@ -35,6 +37,8 @@ const checkSignForm = () => {
 			!(pwdExp.test(signupPwd))) {
 
             alert(errorParamsValue);
+            event.preventDefault();
+            return false;
         }
     });
 }
