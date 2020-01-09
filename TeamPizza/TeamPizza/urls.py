@@ -22,6 +22,7 @@ urlpatterns = [
     path('login-required/', login_required, name='login_required'),
     path('about/', about_view, name='about'),
     path('operation-success/', operation_success, name='success'),
-    path('user/', include('UserApp.urls'))
+    path('user/', include('UserApp.urls')),
+    path('order/', include('OrderApp.urls'))
 
 ]

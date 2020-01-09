@@ -18,17 +18,17 @@
     </div>
     <ul class="nav-links">
         <li>
-            <a href="/home">Home</a>
-        </li>
-        <li>
             <a href="/about">About</a>
         </li>
         {% if user.is_authenticated %}
             <li>
-                <a href="/order">Order</a>
+                <a href="/users/">Users</a>
             </li>
             <li>
                 <a href="/user/sign-up-form">Register</a>
+            </li>
+            <li>
+                <a href="/order/options/">Order</a>
             </li>
             <li>
                 <a href="/user/account">Account</a>
