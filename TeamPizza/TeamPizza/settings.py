@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'UserApp.apps.TeamPizzaConfig',
+    'OrderApp.apps.OrderappConfig',
 ]
 
 AUTH_USER_MODEL = 'UserApp.PizzaUser'
@@ -164,4 +165,3 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATIC_URL = '/static/'
-
