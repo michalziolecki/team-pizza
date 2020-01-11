@@ -1,0 +1,54 @@
+{% extends "../TeamPizza/index.html" %}
+
+{% block title %} Account - Team Pizza {% endblock %}
+
+{% block content %}
+
+    <div class="form-form-container">
+        <a id="form-exit" href="/">
+            <div class="cross">
+                <div id="line-1" class="cross-line"></div>
+                <div id="line-2" class="cross-line"></div>
+            </div>
+        </a>
+        <span class="form-heading">Order options</span>
+        <div class="tab-window">
+            <div class="tabs-account">
+                <button style="cursor: pointer; background-color: #ccc" id="create-order-tab" onclick="">Create order</button>
+                <button style="cursor: pointer" id="make-order-tab" onclick="">Make order</button>
+                {#                <button style="cursor: pointer; border-right: none" id="security-tab"#}
+                {#                        onclick="changeDivToSecurity()">Security#}
+                {#                </button>#}
+            </div>
+            <div id="create-order-form" style="display: block">
+                <form class="create-order-class-form" action="/order/create/" method="post"
+                      enctype='application/json'>
+                    {% csrf_token %}
+                    <div class="input-group">
+                        {% if bad_pwd_params %}
+                            <a style="color: black">{{ bad_pwd_params }}</a>
+                        {% endif %}
+                        <button id="createOrderButton">
+                            <i class="fab fa-telegram-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div id="make-order-form" style="display: none">
+                <form class="make-order-class-form" action="/order/make/" method="post"
+                      enctype='application/json'>
+                    {% csrf_token %}
+                    <div class="input-group">
+                        {% if bad_rm_params %}
+                            <a style="color: black">{{ bad_rm_params }}</a>
+                        {% endif %}
+                        <button id="makeOrderButton">
+                            <i class="fab fa-telegram-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
