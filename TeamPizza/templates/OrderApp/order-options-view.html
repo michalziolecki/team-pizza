@@ -3,52 +3,94 @@
 {% block title %} Account - Team Pizza {% endblock %}
 
 {% block content %}
-
-    <div class="form-form-container">
-        <a id="form-exit" href="/">
-            <div class="cross">
-                <div id="line-1" class="cross-line"></div>
-                <div id="line-2" class="cross-line"></div>
-            </div>
-        </a>
-        <span class="form-heading">Order options</span>
-        <div class="tab-window">
-            <div class="tabs-account">
-                <button style="cursor: pointer; background-color: #ccc" id="create-order-tab" onclick="">Create order</button>
-                <button style="cursor: pointer" id="make-order-tab" onclick="">Make order</button>
-                {#                <button style="cursor: pointer; border-right: none" id="security-tab"#}
-                {#                        onclick="changeDivToSecurity()">Security#}
-                {#                </button>#}
-            </div>
-            <div id="create-order-form" style="display: block">
-                <form class="create-order-class-form" action="/order/create/" method="post"
-                      enctype='application/json'>
-                    {% csrf_token %}
-                    <div class="input-group">
-                        {% if bad_pwd_params %}
-                            <a style="color: black">{{ bad_pwd_params }}</a>
-                        {% endif %}
-                        <button id="createOrderButton">
-                            <i class="fab fa-telegram-plane"></i>
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <div id="make-order-form" style="display: none">
-                <form class="make-order-class-form" action="/order/make/" method="post"
-                      enctype='application/json'>
-                    {% csrf_token %}
-                    <div class="input-group">
-                        {% if bad_rm_params %}
-                            <a style="color: black">{{ bad_rm_params }}</a>
-                        {% endif %}
-                        <button id="makeOrderButton">
-                            <i class="fab fa-telegram-plane"></i>
-                        </button>
-                    </div>
-                </form>
+    <div id="order-wrapper">
+        <div class="form-order-container">
+            <a id="form-exit" href="/">
+                <div class="cross">
+                    <div id="line-1" class="cross-line"></div>
+                    <div id="line-2" class="cross-line"></div>
+                </div>
+            </a>
+            <span class="form-heading">Order options</span>
+            <div class="tab-window">
+                <div class="tabs-account">
+                    <button style="cursor: pointer; background-color: #ccc" id="join-to-order-tab"
+                            onclick="changeDivToOpenedOrders()">Opened
+                        orders
+                    </button>
+                    <button style="cursor: pointer;" id="create-order-tab"
+                            onclick="changeDivToCreateOrder()">Create order
+                    </button>
+                    {#                <button style="cursor: pointer; border-right: none" id="security-tab"#}
+                    {#                        onclick="changeDivToSecurity()">Security#}
+                    {#                </button>#}
+                </div>
+                <div id="create-order-form" style="display: none">
+                    <form class="create-order-class-form" action="/order/create/" method="post"
+                          enctype='application/json'>
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <i class="fas fa-clock"></i>
+                            <input id="predict-order-datetime-id" name="predict-order-time" type="datetime-local"
+                                   required>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-pen"></i>
+                            <!--
+                            <input id="create-order-description" name="description" type="text" placeholder="Your order description...">
+                            <span class="bar"></span>
+                             -->
+                            <textarea id="create-order-description" name="description" class="input-group">Your order description...</textarea>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group">
+                            {% if bad_pwd_params %}
+                                <a style="color: black">{{ bad_create_params }}</a>
+                            {% endif %}
+                            <button id="createOrderButton">
+                                <i class="fab fa-telegram-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div id="choose-order-table" style="display: block">
+                    <br>
+                    <table style="width:90%; text-align: center">
+                        <tr>
+                            <th>Owner</th>
+                            <th>Deadline</th>
+                            <th>Description</th>
+                            <th>Preview</th>
+                            <th>Join</th>
+                        </tr>
+                        {% for order in order_list %}
+                            <tr>
+                                <td>{{ order.order_owner }}</td>
+                                <td>{{ order.predict_order_time }}</td>
+                                <td>{{ order.description }}</td>
+                                <td>
+                                    <form name="preview-order" action="/order/preview-order/{{ order.hash_id }}">
+                                        <i class="fas fa-search"></i>
+                                        <input id="preview-this-order" type="submit" name="preview">
+                                    </form>
+                                </td>
+                                <td>
+                                    <form name="join-to-order" action="/order/join-to-order/{{ order.hash_id }}">
+                                        <i class="fas fa-sign-in"></i>
+                                        <input id="join-order" type="submit" name="join">
+                                        {#                                    <button id="joinButton">#}
+                                        {#                                        <i class="fab fa-telegram-plane"></i>#}
+                                        {#                                    </button>#}
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-
+    <script src="/static/create_order.js"></script>
+    <script src="/static/change_div_content.js"></script>
 {% endblock %}

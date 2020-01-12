@@ -1,13 +1,16 @@
 from django.conf import settings
 from django.db import models
+from hashid_field import HashidField
 
 
 class Order(models.Model):
+    hash_id = HashidField()
     order_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    prediction_order_time = models.CharField(max_length=200)
+    description = models.CharField(max_length=200)
     is_open = models.BooleanField(default=True, null=False)
     open_time = models.DateTimeField(null=False)
     close_time = models.BooleanField(null=True)
-    description = models.CharField(max_length=200)
 
 
 class ContributionOrder(models.Model):

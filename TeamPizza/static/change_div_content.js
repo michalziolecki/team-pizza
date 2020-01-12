@@ -1,4 +1,4 @@
-const createBackgroundTabColor = (updateColor, securityColor, removeColor ) => {
+const createBackgroundTabColor = (updateColor, securityColor, removeColor) => {
     var updateTab = document.getElementById('update-tab');
     var securityTab = document.getElementById('security-tab');
     var removeTab = document.getElementById('remove-tab');
@@ -43,3 +43,29 @@ const changeDivToRemove = () => {
 
 };
 
+const createBackgroundOrderTabColor = (createColorTab, ordersColorTab) => {
+    var createOrderTab = document.getElementById('create-order-tab');
+    var chooseOrderTab = document.getElementById('join-to-order-tab');
+    createOrderTab.style.backgroundColor = createColorTab;
+    chooseOrderTab.style.backgroundColor = ordersColorTab;
+};
+
+const changeDivToCreateOrder = () => {
+    var createOrderTab = document.getElementById('create-order-form');
+    var chooseOrderTab = document.getElementById('choose-order-table');
+    createOrderTab.style.display = "block";
+    chooseOrderTab.style.display = "none";
+
+    createBackgroundOrderTabColor('#ccc', '');
+
+};
+
+const changeDivToOpenedOrders = () => {
+    var createOrderTab = document.getElementById('create-order-form');
+    var chooseOrderTab = document.getElementById('choose-order-table');
+    createOrderTab.style.display = "none";
+    chooseOrderTab.style.display = "block";
+
+    createBackgroundOrderTabColor('', '#ccc');
+
+};

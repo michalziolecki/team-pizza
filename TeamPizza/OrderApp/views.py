@@ -13,7 +13,7 @@ def order_options_view(request):
 def opened_order_view(request):
     user = request.user
     context = {'user': user}
-    return render(request, 'OrderApp/order-options-view.html', context)
+    return render(request, 'OrderApp/opened-order-view.html', context)
 
 
 @login_required(login_url='/login-required')
@@ -21,14 +21,6 @@ def create_order(request):
     user = request.user
     context = {'user': user}
     # POST method to create order in db
-    return render(request, 'OrderApp/order-options-view.html', context)
-
-
-@login_required(login_url='/login-required')
-def make_order(request):
-    user = request.user
-    context = {'user': user}
-    # POST method to add preferences to order in db
     return render(request, 'OrderApp/order-options-view.html', context)
 
 
@@ -46,3 +38,19 @@ def delete_order(request):
     context = {'user': user}
     # POST method to delete order in db
     return render(request, 'OrderApp/order-deleted.html', context)
+
+
+@login_required(login_url='/login-required')
+def join_order_view(request):
+    user = request.user
+    context = {'user': user}
+    # view of form to join
+    return render(request, 'OrderApp/join-order-view.html', context)
+
+
+@login_required(login_url='/login-required')
+def join_order(request):
+    user = request.user
+    context = {'user': user}
+    # POST method to add preferences to order in db
+    return render(request, 'OrderApp/order-options-view.html', context)
