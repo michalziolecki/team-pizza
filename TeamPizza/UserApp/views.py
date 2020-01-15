@@ -11,7 +11,7 @@ from django.http.request import QueryDict
 from .models import PizzaUser
 from django.db import Error as DB_Error
 from .user_functions import is_usual_user_and_exist, insert_new_user_into_db, verify_password, \
-    update_user_info_while_login, update_user_info_while_logout, get_last_user_login,\
+    update_user_info_while_login, update_user_info_while_logout, get_last_user_login, \
     hash_and_salt_password, get_user_from_db
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -91,9 +91,9 @@ def sign_up(request: WSGIRequest) -> HttpResponse:
 
         return render(request, template, context)
     elif not user.is_authenticated:
-        return render(request, 'TeamPizza/not-authenticated.html', context)
+        return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
     else:
-        return render(request, 'TeamPizza/bad-method.html', context)
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
 
 
 @login_required(login_url='/login-required')
@@ -152,9 +152,9 @@ def update_account(request):
         return render(request, 'UserApp/account-view.html', context)
 
     elif not user.is_authenticated:
-        return render(request, 'TeamPizza/not-authenticated.html', context)
+        return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
     else:
-        return render(request, 'TeamPizza/bad-method.html', context)
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
 
 
 @login_required(login_url='/login-required')
@@ -200,6 +200,6 @@ def remove_account(request):
         return render(request, 'UserApp/account-view.html', context)
 
     elif not user.is_authenticated:
-        return render(request, 'TeamPizza/not-authenticated.html', context)
+        return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
     else:
-        return render(request, 'TeamPizza/bad-method.html', context)
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
