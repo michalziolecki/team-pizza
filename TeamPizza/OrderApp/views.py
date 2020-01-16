@@ -45,7 +45,7 @@ def order_options_view(request: WSGIRequest):
 
 
 @login_required(login_url='/login-required')
-def opened_order_view(request: WSGIRequest):
+def opened_order_view(request: WSGIRequest, hash_id: str):
     user = request.user
     context = {'user': user}
     return render(request, 'OrderApp/opened-order-view.html', context)
@@ -120,7 +120,7 @@ def delete_order(request: WSGIRequest):
 
 
 @login_required(login_url='/login-required')
-def join_order_view(request: WSGIRequest):
+def join_order_view(request: WSGIRequest, hash_id: str):
     user = request.user
     context = {'user': user}
     # view of form to join
