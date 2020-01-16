@@ -21,9 +21,6 @@
                     <button style="cursor: pointer;" id="create-order-tab"
                             onclick="changeDivToCreateOrder()">Create order
                     </button>
-                    {#                <button style="cursor: pointer; border-right: none" id="security-tab"#}
-                    {#                        onclick="changeDivToSecurity()">Security#}
-                    {#                </button>#}
                 </div>
                 <div id="create-order-form" style="display: none">
                     <form class="create-order-class-form" action="/order/create/" method="post"
@@ -37,10 +34,6 @@
                         </div>
                         <div class="input-group">
                             <i class="fas fa-pen"></i>
-                            <!--
-                            <input id="create-order-description" name="description" type="text" placeholder="Your order description...">
-                            <span class="bar"></span>
-                             -->
                             <textarea id="create-order-description" name="description" class="input-group">Your order description...</textarea>
                             <span class="bar"></span>
                         </div>
@@ -54,12 +47,12 @@
                         </div>
                     </form>
                 </div>
-                <div id="choose-order-table" style="display: block">
+                <div id="choose-order-table" style="display: block;">
                     <br>
-                    <table style="width:90%; text-align: center">
+                    <table id="table-with-open-orders" style="width:90%; text-align: center;">
                         <tr>
                             <th>Owner</th>
-                            <th>Deadline</th>
+                            <th>Predicted Deadline</th>
                             <th>Description</th>
                             <th>Preview</th>
                             <th>Join</th>
@@ -67,26 +60,22 @@
                         {% for order in order_list %}
                             <tr>
                                 <td>{{ order.order_owner }}</td>
-                                <td>{{ order.predict_order_time }}</td>
+                                <td>{{ order.prediction_order_time }}</td>
                                 <td>{{ order.description }}</td>
                                 <td>
-                                    <form name="preview-order" action="/order/preview-order/{{ order.hash_id }}">
-                                        <i class="fas fa-search"></i>
-                                        <input id="preview-this-order" type="submit" name="preview">
-                                    </form>
+                                    <a  id="preview-ref" class="order-table-ref" href="/order/preview-order/{{ order.hash_id }}"><i
+                                            class="fas fa-search"></i></a>
                                 </td>
                                 <td>
-                                    <form name="join-to-order" action="/order/join-to-order/{{ order.hash_id }}">
-                                        <i class="fas fa-sign-in"></i>
-                                        <input id="join-order" type="submit" name="join">
-                                        {#                                    <button id="joinButton">#}
-                                        {#                                        <i class="fab fa-telegram-plane"></i>#}
-                                        {#                                    </button>#}
-                                    </form>
+                                    <a id="join-ref" class="order-table-ref" href="/order/join-to-order/{{ order.hash_id }}"><i
+                                            class="fas fa-sign-in-alt"></i></a>
                                 </td>
                             </tr>
                         {% endfor %}
                     </table>
+                    {% if bad_param %}
+                        <a style="color: black">{{ bad_param }}</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

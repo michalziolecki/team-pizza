@@ -30,8 +30,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-# field for OrderApp model - used to create hash_id field
-HASHID_FIELD_SALT = "7lip3ohg5606ousv5s3wieds"
 
 # logging
 LOGGER_NAME = 'TeamPizzaLog'
