@@ -1,0 +1,53 @@
+{% extends "../TeamPizza/index.html" %}
+
+{% block title %} Join to order - Team Pizza {% endblock %}
+
+{% block content %}
+    <div id="order-wrapper">
+        <div class="form-join-container">
+            <a id="form-exit" href="/">
+                <div class="cross">
+                    <div id="line-1" class="cross-line"></div>
+                    <div id="line-2" class="cross-line"></div>
+                </div>
+            </a>
+            <span class="form-heading">Join to order</span>
+            <div class="tab-window">
+                <div id="join-order-form">
+                    <form class="join-order-class-form" action="/join/{{ hash_id }}/" method="post"
+                          enctype='application/json'>
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <i class="fas fa-pizza-slice" ></i>
+                            <input id="order-elements-id" name="order-elements" min="1" step="1"
+                                   type="number" pattern="[0-9]{1,2}" value="1" style="font-size: 1.2rem" required>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group" >
+                            <i class="fas fa-check-square"></i>
+                            <select class="select-role" name="size" style="font-size: 1.2rem">
+                                <option value="B">Big</option>
+                                <option value="S">Small</option>
+                            </select>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-pen"></i>
+                            <textarea id="create-order-description" name="description" class="input-group">Your order description...</textarea>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group">
+                            {% if bad_param %}
+                                <a style="color: black">{{ bad_param }}</a>
+                            {% endif %}
+                            <button id="joinToOrderButton">
+                                <i class="fab fa-telegram-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/join_to_order.js"></script>
+{% endblock %}
