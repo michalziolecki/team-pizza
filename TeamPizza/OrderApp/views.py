@@ -122,14 +122,59 @@ def delete_order(request: WSGIRequest):
 @login_required(login_url='/login-required')
 def join_order_view(request: WSGIRequest, hash_id: str):
     user = request.user
-    context = {'user': user}
-    # view of form to join
+    context = {'user': user,
+               'hash_id': hash_id
+               }
     return render(request, 'OrderApp/join-order-view.html', context)
 
 
 @login_required(login_url='/login-required')
-def join_order(request: WSGIRequest):
+def join_order(request: WSGIRequest, hash_id: str):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user = request.user
     context = {'user': user}
-    # POST method to add preferences to order in db
-    return render(request, 'OrderApp/order-options-view.html', context)
+    if request.method == 'POST' and user.is_authenticated:
+        pieces = ''
+        size = ''
+        description = ''
+
+        try:
+            post_body: QueryDict = request.POST
+            params: dict = post_body.dict()
+            pieces = params['pieces']
+            size = params['size']
+            description = params['description']
+        except KeyError as ke:
+            logger.error(f'Key error while user try join to order, probably someone change form!'
+                         f'  info: {ke.args}')
+
+        db_user: PizzaUser = get_user_from_db(user.username)
+
+        if pieces and size and db_user:
+            try:
+                order = Order.objects.filter(hash_id=hash_id).get()
+                contribution = ContributionOrder(
+                    contribution_owner=db_user,
+                    order=order,
+                    pieces_number=int(pieces),
+                    size=size,
+                    add_contr_time=datetime.now(),
+                    was_updated=False,
+                    description=description
+                )
+                contribution.save()
+                logger.debug(f'User: {db_user.username} join to order "{hash_id}"! ')
+                return redirect(f'/order/preview-order/{hash_id}/')
+            except DB_Error as db_err:
+                logger.error(f'Create order by user {user.username} failed ! info: {db_err.args}')
+                context['bad_param'] = 'Problem with database try again'
+            except BaseException as be:
+                logger.error(f'Create order by user {user.username} failed ! Base exception cached info: {be.args}')
+                context['bad_param'] = 'Problem with database try again'
+        else:
+            context['bad_param'] = 'Data is incorrect'
+        return render(request, 'OrderApp/join-order-view.html', context)
+    elif not user.is_authenticated:
+        return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
+    else:
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)

@@ -14,12 +14,12 @@
             <span class="form-heading">Join to order</span>
             <div class="tab-window">
                 <div id="join-order-form">
-                    <form class="join-order-class-form" action="/join/{{ hash_id }}/" method="post"
+                    <form class="join-order-class-form" action="/order/join/{{ hash_id }}/" method="post"
                           enctype='application/json'>
                         {% csrf_token %}
                         <div class="input-group">
                             <i class="fas fa-pizza-slice" ></i>
-                            <input id="order-elements-id" name="order-elements" min="1" step="1"
+                            <input id="order-elements-id" name="pieces" min="1" step="1"
                                    type="number" pattern="[0-9]{1,2}" value="1" style="font-size: 1.2rem" required>
                             <span class="bar"></span>
                         </div>
