@@ -11,10 +11,40 @@
                     <div id="line-2" class="cross-line"></div>
                 </div>
             </a>
-            <span class="form-heading">Order</span>
+            <span class="form-heading">Order information's</span>
             <div class="tab-window">
-                <div id="create-order-form" style="display: none">
-                    <a>TEST</a>
+                <div id="opened-order-id">
+
+                    <table id="order-table-id" class="order-table">
+                        <tr>
+                            <th>Owner:</th>
+                            <th>{{ order.order_owner.first_name }} {{ order.order_owner.last_name }}</th>
+                        </tr>
+                        <tr>
+                            <th>Predicted time:</th>
+                            <th>{{ order.prediction_order_time }}</th>
+                        </tr>
+                        {% if order.description %}
+                            <tr>
+                                <th>Description:</th>
+                                <th>{{ order.description }}</th>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <th>is open?</th>
+                            <th>{{ order.is_open }}</th>
+                        </tr>
+                        <tr>
+                            <th>Open time:</th>
+                            <th>{{ order.open_time }}</th>
+                        </tr>
+                        {% if order.is_open is False %}
+                            <tr>
+                                <th>Close Time:</th>
+                                <th>{{ order.close_time }}</th>
+                            </tr>
+                        {% endif %}
+                    </table>
                 </div>
             </div>
         </div>
