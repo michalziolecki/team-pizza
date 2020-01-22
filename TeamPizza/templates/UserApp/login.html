@@ -1,0 +1,39 @@
+{% extends '../TeamPizza/index.html' %}
+
+{% block title %} Login to Team Pizza {% endblock %}
+
+{% block content %}
+    <div id="login-wrapper">
+        <div class="form-container">
+            <a id="form-exit" href="/">
+                <div class="cross">
+                    <div id="line-1" class="cross-line"></div>
+                    <div id="line-2" class="cross-line"></div>
+                </div>
+            </a>
+            <span class="form-heading">Login</span>
+            <form class="register-form" action="/user/login/" method="post" enctype='application/json'>
+                {% csrf_token %}
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input title="min. 6 characters a-zA-Z0-9" id="loginNickname" name="nickname" type="text" placeholder="Username or email ..." required>
+                    <span class="bar"></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input title="min. 9 characters" id="loginPassword" name="password" type="password" placeholder="password..." required>
+                    <span class="bar"></span>
+                </div>
+                <div class="input-group">
+                    {% if bad_params %}
+                        <p style="color: black">{{ bad_params }}</p>
+                    {% endif %}
+                    <button id="loginButton">
+                        <i class="fab fa-telegram-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="/static/parse_login_form.js"></script>
+{% endblock %}

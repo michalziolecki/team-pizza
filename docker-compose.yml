@@ -20,9 +20,12 @@ services:
     container_name: nginx
     ports:
       - "8080:8000"
+      - "443:443"
     volumes:
       - ./nginx_config/conf.d:/etc/nginx/conf.d
       - ./TeamPizza/static:/static
+      - ./ssl/key:/etc/ssl
+      - ./ssl/cert:/ssl
     depends_on:  # <-- wait for djangoapp to be "ready" before starting this service
       - web-app
     links:  # <--  other method to create connections between containers
@@ -44,4 +47,4 @@ services:
       - db-postgres
     links:
       - db-postgres:db-postgres
-    command: bash -c "python3 /TeamPizza/manage.py  makemigrations --noinput && python3 /TeamPizza/manage.py  migrate --noinput && gunicorn TeamPizza.wsgi -b 0.0.0.0:8000"
+    command: bash -c "python3 /TeamPizza/manage.py  makemigrations --noinput && python3 /TeamPizza/manage.py  migrate --noinput && gunicorn TeamPizza.wsgi --keyfile /ssl/key/dummy-key.pem --certfile /ssl/cert/dummy-certificate.crt -b 0.0.0.0:8000"

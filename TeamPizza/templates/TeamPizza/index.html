@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Team Pizza</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"> <!-- registry icon -->
+    <link rel="stylesheet" href="/static/index_style.css"> <!--/static/-->
+    <link rel="stylesheet" href="/static/basic_container_style.css">
+    <link rel="stylesheet" href="/static/user_containers_style.css">
+    <link rel="stylesheet" href="/static/order_style.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar">
+    <div class="logo">
+        <h4><a href="/">Pizza Team</a></h4>
+    </div>
+    <ul class="nav-links">
+        <li>
+            <a href="/about">About</a>
+        </li>
+        {% if user.is_authenticated %}
+            <li>
+                <a href="/users/">Users</a>
+            </li>
+            <li>
+                <a href="/user/sign-up-form">Register</a>
+            </li>
+            <li>
+                <a href="/order/options/">Order</a>
+            </li>
+            <li>
+                <a href="/user/account">Account</a>
+            </li>
+            <li>
+                <a href="/user/logout">Logout</a>
+            </li>
+        {% else %}
+            <li>
+                <a href="/user/log-form">Login</a>
+            </li>
+        {% endif %}
+    </ul>
+    <div class="stack">
+        <div class="line1"></div>
+        <div class="line2"></div>
+        <div class="line3"></div>
+    </div>
+</nav>
+<br>
+<br>
+<br>
+{% block content %}
+{% endblock %}
+<script src="/static/main.js"></script>
+</body>
+</html>
