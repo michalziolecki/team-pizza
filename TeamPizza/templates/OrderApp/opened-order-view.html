@@ -14,7 +14,7 @@
             <span class="form-heading">Order information's</span>
             <div class="tab-window">
                 <div id="opened-order-id">
-
+                    <h2 class="order-header">Created Order</h2>
                     <table id="order-table-id" class="order-table">
                         <tr>
                             <th>Owner:</th>
@@ -44,7 +44,84 @@
                                 <th>{{ order.close_time }}</th>
                             </tr>
                         {% endif %}
+                        <tr>
+                            <th>Small pieces:</th>
+                            <th>{{ small_pieces }}</th>
+                        </tr>
+                        <tr>
+                            <th>Big pieces:</th>
+                            <th>{{ big_pieces }}</th>
+                        </tr>
+                        <tr>
+                            <th>All pieces:</th>
+                            <th>{{ all_pieces }}</th>
+                        </tr>
+                        {% if user.id == order.order_owner.id %}
+                            <tr>
+                                <th>Update:</th>
+                                <th>
+                                    <button>Update</button>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Close:</th>
+                                <th>
+                                    <button>Close</button>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Delete:</th>
+                                <th>
+                                    <button>Delete</button>
+                                </th>
+                            </tr>
+                        {% endif %}
                     </table>
+                </div>
+                <div id="contribution-order-id">
+                    <h2 class="order-header">Contributions</h2>
+                    {% for contribution in contributions %}
+                        <table class="order-table">
+                            <tr>
+                                <th>Participant:</th>
+                                <th>{{ contribution.contribution_owner.first_name }} {{ contribution.contribution_owner.last_name }}</th>
+                            </tr>
+                            <tr>
+                                <th>Pieces:</th>
+                                <th>{{ contribution.pieces_number }}</th>
+                            </tr>
+                            {% if contribution.description %}
+                                <tr>
+                                    <th>Description:</th>
+                                    <th>{{ contribution.description }}</th>
+                                </tr>
+                            {% endif %}
+                            <tr>
+                                <th>Size</th>
+                                {% if contribution.size == 'B' %}
+                                    <th>Big</th>
+                                {% else %}
+                                    <th>Small</th>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                <th>Joining time:</th>
+                                <th>{{ contribution.add_contr_time }}</th>
+                            </tr>
+                            <tr>
+                                <th>Was updated?</th>
+                                <th>{{ contribution.was_updated }}</th>
+                            </tr>
+                            {% if user.id == order.order_owner.id %}
+                                <tr>
+                                    <th>Update:</th>
+                                    <th>
+                                        <button>Update</button>
+                                    </th>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    {% endfor %}
                 </div>
             </div>
         </div>

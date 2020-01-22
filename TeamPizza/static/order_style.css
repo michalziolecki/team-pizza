@@ -21,11 +21,20 @@
 }
 
 .order-table {
+    position: center;
     width:90%;
     text-align: center;
-    border-bottom: 1px solid black
+    border-bottom: 1px solid black;
 }
 
+.order-header{
+    position: center;
+    padding-right: 10%;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
 
 .form-order-container {
     font-family: 'Poppins', sans-serif;

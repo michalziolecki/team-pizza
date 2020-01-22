@@ -50,12 +50,25 @@ def opened_order_view(request: WSGIRequest, hash_id: str):
     user = request.user
     context = {'user': user}
     if request.method == 'GET' and user.is_authenticated:
+        logger.debug('Get method opened_order_view')
         db_user = get_user_from_db(user.username)
         if db_user:
             try:
                 order = Order.objects.filter(hash_id=hash_id).get()
+                contributions = ContributionOrder.objects.filter(order=order).order_by('add_contr_time')
                 # pobrać powiązane encje
+                small_pieces = 0
+                big_pieces = 0
+                logger.debug(f'contributions size: {len(contributions)}')
+                for piece in [contribute for contribute in contributions if contribute.size == 'B']:
+                    big_pieces += piece.pieces_number
+                for piece in [contribute for contribute in contributions if contribute.size == 'S']:
+                    small_pieces += piece.pieces_number
+                context['contributions'] = contributions
                 context['order'] = order
+                context['small_pieces'] = small_pieces
+                context['big_pieces'] = big_pieces
+                context['all_pieces'] = small_pieces + big_pieces
             except DB_Error as db_err:
                 logger.error(f'Getting order "{hash_id}" from database failed ! info: {db_err.args}')
                 context['bad_param'] = 'Problem with database try again'
