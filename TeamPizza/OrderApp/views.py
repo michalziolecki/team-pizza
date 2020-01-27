@@ -183,7 +183,15 @@ def join_order(request: WSGIRequest, hash_id: str):
 
         db_user: PizzaUser = get_user_from_db(user.username)
 
-        if pieces and size and db_user:
+        pieces_int = 0
+        if pieces:
+            try:
+                pieces_int = int(pieces)
+            except ValueError as ve:
+                logger.error(f'Value error while user try join to order, number of pieces was not integer!'
+                             f'  info: {ve.args}')
+
+        if pieces_int > 0 and size and db_user:
             try:
                 order = Order.objects.filter(hash_id=hash_id).get()
                 contribution = ContributionOrder(

@@ -32,7 +32,6 @@ def login_user(request: WSGIRequest):
     if request.method == 'POST':
         username = ''
         password = ''
-        logger.debug(f'request dict: {request.POST}')
         try:
             username = request.POST['nickname']
             password = request.POST['password']
@@ -78,9 +77,6 @@ def sign_up(request: WSGIRequest) -> HttpResponse:
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user: SimpleLazyObject = request.user
     logger.info(f'New user registered by {user.username}, user type: {type(user.username)}')
-    logger.debug(f'POST headers: {request.headers}')
-    logger.debug(f'POST body: {request.body}')
-
     context = {'user': user}
     if request.method == 'POST' and user.is_authenticated:
         is_usual, exist = is_usual_user_and_exist(user.username)
