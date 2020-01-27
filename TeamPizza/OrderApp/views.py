@@ -17,6 +17,7 @@ from UserApp.models import PizzaUser
 from UserApp.user_functions import get_user_from_db
 from .models import Order, ContributionOrder
 from OrderApp import HASH_IDS_LENGTH
+from .order_functions import user_already_joined
 
 
 @login_required(login_url='/login-required')
@@ -197,7 +198,9 @@ def join_order(request: WSGIRequest, hash_id: str):
                 logger.error(f'Value error while user try join to order, number of pieces was not integer!'
                              f'  info: {ve.args}')
 
-        if pieces_int > 0 and size and db_user:
+        if user_already_joined(hash_id, db_user):
+            context['bad_param'] = 'You have already joined'
+        elif pieces_int > 0 and size and db_user:
             try:
                 order = Order.objects.filter(hash_id=hash_id).get()
                 contribution = ContributionOrder(
@@ -225,3 +228,6 @@ def join_order(request: WSGIRequest, hash_id: str):
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
     else:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)
+
+
+
