@@ -106,6 +106,9 @@ def create_order(request: WSGIRequest):
         parsed_datetime = datetime.strptime(predicted_datetime, "%Y-%m-%dT%H:%M")
         actual_time = datetime.now()
 
+        if description == 'Your order description...':
+            description = ''
+
         if actual_time < parsed_datetime and db_user:
             try:
                 hash_id: str = hashlib.sha1(os.urandom(HASH_IDS_LENGTH)).hexdigest()
@@ -182,6 +185,9 @@ def join_order(request: WSGIRequest, hash_id: str):
                          f'  info: {ke.args}')
 
         db_user: PizzaUser = get_user_from_db(user.username)
+
+        if description == 'Your order description...':
+            description = ''
 
         pieces_int = 0
         if pieces:
