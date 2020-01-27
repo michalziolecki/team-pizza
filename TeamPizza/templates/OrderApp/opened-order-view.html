@@ -112,7 +112,7 @@
                                 <th>Was updated?</th>
                                 <th>{{ contribution.was_updated }}</th>
                             </tr>
-                            {% if user.id == order.order_owner.id %}
+                            {% if user.id == contribution.contribution_owner.id %}
                                 <tr>
                                     <th>Update:</th>
                                     <th>
