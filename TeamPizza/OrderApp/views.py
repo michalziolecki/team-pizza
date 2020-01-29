@@ -141,7 +141,15 @@ def create_order(request: WSGIRequest):
 
 
 @login_required(login_url='/login-required')
-def close_order(request: WSGIRequest):
+def update_order_view(request: WSGIRequest, hash_id: str):
+    user = request.user
+    context = {'user': user}
+    # POST method to close order in db
+    return render(request, 'OrderApp/order-update.html', context)
+
+
+@login_required(login_url='/login-required')
+def close_order(request: WSGIRequest, hash_id: str):
     user = request.user
     context = {'user': user}
     # POST method to close order in db
@@ -149,11 +157,27 @@ def close_order(request: WSGIRequest):
 
 
 @login_required(login_url='/login-required')
-def delete_order(request: WSGIRequest):
+def delete_order(request: WSGIRequest, hash_id: str):
     user = request.user
     context = {'user': user}
     # POST method to delete order in db
     return render(request, 'OrderApp/order-deleted.html', context)
+
+
+@login_required(login_url='/login-required')
+def delete_contribution(request: WSGIRequest, hash_id: str, contribution_id: str):
+    user = request.user
+    context = {'user': user}
+    # POST method to delete order in db
+    return render(request, 'OrderApp/contribution-deleted.html', context)
+
+
+@login_required(login_url='/login-required')
+def update_contribution(request: WSGIRequest, hash_id: str, contribution_id: str):
+    user = request.user
+    context = {'user': user}
+    # POST method to delete order in db
+    return render(request, 'OrderApp/contribution-deleted.html', context)
 
 
 @login_required(login_url='/login-required')
@@ -228,6 +252,3 @@ def join_order(request: WSGIRequest, hash_id: str):
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
     else:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)
-
-
-

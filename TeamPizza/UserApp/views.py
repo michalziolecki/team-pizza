@@ -154,7 +154,7 @@ def update_account(request):
 
 
 @login_required(login_url='/login-required')
-def remove_account(request):
+def remove_account(request: WSGIRequest):
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user = request.user
     context = {'user': user}
@@ -199,3 +199,10 @@ def remove_account(request):
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
     else:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)
+
+
+@login_required(login_url='/login-required')
+def users_view(request: WSGIRequest):
+    user = request.user
+    context = {'user': user}
+    return render(request, 'UserApp/users.html', context)

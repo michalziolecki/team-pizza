@@ -1,0 +1,41 @@
+{% extends "../TeamPizza/index.html" %}
+
+{% block title %} Users - Team Pizza {% endblock %}
+
+{% block content %}
+    <div id="order-wrapper">
+        <div class="form-order-container">
+            <a id="form-exit" href="/">
+                <div class="cross">
+                    <div id="line-1" class="cross-line"></div>
+                    <div id="line-2" class="cross-line"></div>
+                </div>
+            </a>
+            <span class="form-heading">Users list and privileges- in progress..</span>
+            <div class="tab-window">
+                <div id="users-table">
+                    <br>
+                    <table id="table-with-users" style="width:90%; text-align: center;">
+                        <tr>
+                            <th>Nickname</th>
+                            <th>Name</th>
+                            <th>Last Name</th>
+                            <th>Privileges</th>
+                        </tr>
+                        {% for user in users_list %}
+                            <tr>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.first_name }}</td>
+                                <td>{{ user.last_name }}</td>
+                                <td>{{ user.role }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    {% if bad_param %}
+                        <a style="color: black">{{ bad_param }}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

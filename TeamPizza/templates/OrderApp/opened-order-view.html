@@ -60,19 +60,34 @@
                             <tr>
                                 <th>Update:</th>
                                 <th>
-                                    <button>Update</button>
+                                    <div class="order-option-preview">
+                                            <button onclick="location.href='/order/update/{{ order.hash_id }}'"
+                                                    class="order-table-button">
+                                                <i class="fab fa-telegram-plane"></i>
+                                            </button>
+                                        </div>
                                 </th>
                             </tr>
                             <tr>
                                 <th>Close:</th>
                                 <th>
-                                    <button>Close</button>
+                                    <div class="order-option-preview">
+                                            <button onclick="location.href='/order/close/{{ order.hash_id }}'"
+                                                    class="order-table-button">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
                                 </th>
                             </tr>
                             <tr>
                                 <th>Delete:</th>
                                 <th>
-                                    <button>Delete</button>
+                                    <div class="order-option-preview">
+                                            <button onclick="location.href='/order/delete/{{ order.hash_id }}'"
+                                                    class="order-table-button">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
                                 </th>
                             </tr>
                         {% endif %}
@@ -116,7 +131,23 @@
                                 <tr>
                                     <th>Update:</th>
                                     <th>
-                                        <button>Update</button>
+                                        <div class="order-option-preview">
+                                            <button onclick="location.href='/order/update-contribution/{{ contribution.order.hash_id }}/{{ contribution.id }}'"
+                                                    class="order-table-button">
+                                                <i class="fab fa-telegram-plane"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Delete:</th>
+                                    <th>
+                                        <div class="order-option-preview">
+                                            <button onclick="location.href='/order/delete-contribution/{{ contribution.order.hash_id }}/{{ contribution.id }}'"
+                                                    class="order-table-button">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
                                     </th>
                                 </tr>
                             {% endif %}
