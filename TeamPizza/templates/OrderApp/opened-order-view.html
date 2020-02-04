@@ -61,33 +61,36 @@
                                 <th>Update:</th>
                                 <th>
                                     <div class="order-option-preview">
-                                            <button onclick="location.href='/order/update/{{ order.hash_id }}'"
-                                                    class="order-table-button">
-                                                <i class="fab fa-telegram-plane"></i>
-                                            </button>
-                                        </div>
+                                        <button onclick="location.href='/order/update/{{ order.hash_id }}'"
+                                                class="order-table-button">
+                                            <i class="fab fa-telegram-plane"></i>
+                                        </button>
+                                    </div>
+                                    <a style="color: red">{{ bad_param }}</a>
                                 </th>
                             </tr>
                             <tr>
                                 <th>Close:</th>
                                 <th>
                                     <div class="order-option-preview">
-                                            <button onclick="location.href='/order/close/{{ order.hash_id }}'"
-                                                    class="order-table-button">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
+                                        <button onclick="location.href='/order/close/{{ order.hash_id }}'"
+                                                class="order-table-button">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <a style="color: red">{{ bad_param }}</a>
                                 </th>
                             </tr>
                             <tr>
                                 <th>Delete:</th>
                                 <th>
                                     <div class="order-option-preview">
-                                            <button onclick="location.href='/order/delete/{{ order.hash_id }}'"
-                                                    class="order-table-button">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
+                                        <button onclick="location.href='/order/delete/{{ order.hash_id }}'"
+                                                class="order-table-button">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <a style="color: red">{{ bad_param }}</a>
                                 </th>
                             </tr>
                         {% endif %}
@@ -132,22 +135,36 @@
                                     <th>Update:</th>
                                     <th>
                                         <div class="order-option-preview">
-                                            <button onclick="location.href='/order/update-contribution/{{ contribution.order.hash_id }}/{{ contribution.id }}'"
+                                            <button formmethod="post"
+                                                    onclick="location.href='/order/update-contribution/{{ contribution.order.hash_id }}/{{ contribution.id }}'"
                                                     class="order-table-button">
                                                 <i class="fab fa-telegram-plane"></i>
                                             </button>
                                         </div>
+                                        <a style="color: red">{{ bad_param }}</a>
                                     </th>
                                 </tr>
                                 <tr>
                                     <th>Delete:</th>
                                     <th>
                                         <div class="order-option-preview">
-                                            <button onclick="location.href='/order/delete-contribution/{{ contribution.order.hash_id }}/{{ contribution.id }}'"
-                                                    class="order-table-button">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            <form method="post" action="/order/delete-contribution/">
+                                                {% csrf_token %}
+                                                <input hidden name="hash_id" type="text"
+                                                       value="{{ contribution.order.hash_id }}">
+                                                <input hidden name="contribution_id" type="text"
+                                                       value="{{ contribution.id }}">
+                                                <button
+                                                        class="order-table-button">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                            {#                                            <button formmethod="post"#}
+                                            {#                                                    class="order-table-button" onclick="location.href='/order/delete-contribution/{{ contribution.order.hash_id }}/{{ contribution.id }}/'">#}
+                                            {#                                                <i class="fas fa-trash"></i>#}
+                                            {#                                            </button>#}
                                         </div>
+                                        <a style="color: red">{{ bad_param }}</a>
                                     </th>
                                 </tr>
                             {% endif %}

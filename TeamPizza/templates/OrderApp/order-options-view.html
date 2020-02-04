@@ -63,12 +63,23 @@
                                 <td>{{ order.prediction_order_time }}</td>
                                 <td>{{ order.description }}</td>
                                 <td>
-                                    <a  id="preview-ref" class="order-table-ref" href="/order/preview-order/{{ order.hash_id }}"><i
-                                            class="fas fa-search"></i></a>
+                                    <button id="preview-ref"
+                                            onclick="location.href='/order/preview-order/{{ order.hash_id }}'"
+                                            class="order-table-button">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                    {#                                    <a  id="preview-ref" class="order-table-ref" href="/order/preview-order/{{ order.hash_id }}"><i#}
+                                    {#                                            class="fas fa-search"></i></a>#}
                                 </td>
                                 <td>
-                                    <a id="join-ref" class="order-table-ref" href="/order/join-to-order/{{ order.hash_id }}"><i
-                                            class="fas fa-sign-in-alt"></i></a>
+                                    <button id="join-ref"
+                                            onclick="location.href='/order/join-to-order/{{ order.hash_id }}'"
+                                            class="order-table-button">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                    </button>
+{#                                    <a id="join-ref" class="order-table-ref"#}
+{#                                       href="/order/join-to-order/{{ order.hash_id }}"><i#}
+{#                                            class="fas fa-sign-in-alt"></i></a>#}
                                 </td>
                             </tr>
                         {% endfor %}

@@ -22,6 +22,13 @@ def operation_success(request):
     return render(request, 'TeamPizza/operation-success.html', context)
 
 
+# @login_required(login_url='/login-required')
+def operation_failed(request):
+    user = request.user
+    context = {'user': user}
+    return render(request, 'TeamPizza/operation-failed.html', context)
+
+
 def login_required(request):
     user = request.user
     context = {'user': user}

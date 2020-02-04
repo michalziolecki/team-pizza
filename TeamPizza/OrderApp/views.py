@@ -165,11 +165,47 @@ def delete_order(request: WSGIRequest, hash_id: str):
 
 
 @login_required(login_url='/login-required')
-def delete_contribution(request: WSGIRequest, hash_id: str, contribution_id: str):
+def delete_contribution(request: WSGIRequest):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user = request.user
     context = {'user': user}
-    # POST method to delete order in db
-    return render(request, 'OrderApp/contribution-deleted.html', context)
+
+    if request.method == "POST" and user.is_authenticated:
+
+        hash_id = ''
+        contribution_id = ''
+        try:
+            post_body: QueryDict = request.POST
+            params: dict = post_body.dict()
+            hash_id = params['hash_id']
+            contribution_id = params['contribution_id']
+        except KeyError as ke:
+            logger.error(f'Key error while user try remove order contribution, probably someone change form!'
+                         f'  info: {ke.args}')
+
+        if hash_id and contribution_id:
+            try:
+                order = Order.objects.filter(hash_id=hash_id).get()
+                contribution = ContributionOrder.objects \
+                    .filter(id=contribution_id, order=order).get()
+                logger.debug(f'User id is: {user.id} !')
+                if contribution and contribution.contribution_owner.id == user.id:
+                    ContributionOrder.objects.filter(id=contribution_id, order=order).delete()
+                    logger.info(f'Delete order contribution by user {user.username} success !')
+                    return redirect('/operation-success/')
+            except DB_Error as db_err:
+                logger.error(f'Delete order by user {user.username} failed ! info: {db_err.args}')
+                context['bad_param'] = 'Problem with database try again'
+            except BaseException as be:
+                logger.error(f'Delete order by user {user.username} failed ! Base exception cached info: {be.args}')
+                context['bad_param'] = 'Problem with database try again'
+        else:
+            context['bad_param'] = 'Bad params! Someone change form!'
+        return redirect('/operation-failed/')
+    elif not user.is_authenticated:
+        return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
+    else:
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
 
 
 @login_required(login_url='/login-required')

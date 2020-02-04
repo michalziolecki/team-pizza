@@ -12,5 +12,5 @@ urlpatterns = [
     path('close/<str:hash_id>/', close_order),
     path('delete/<str:hash_id>/', delete_order),
     path('update-contribution/<str:hash_id>/<str:contribution_id>/', update_contribution),
-    path('delete-contribution/<str:hash_id>/<str:contribution_id>/', delete_contribution)
+    path('delete-contribution/', delete_contribution)
 ]
