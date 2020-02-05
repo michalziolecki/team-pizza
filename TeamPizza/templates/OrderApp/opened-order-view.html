@@ -135,8 +135,7 @@
                                     <th>Update:</th>
                                     <th>
                                         <div class="order-option-preview">
-                                            <button formmethod="post"
-                                                    onclick="location.href='/order/update-contribution/{{ contribution.order.hash_id }}/{{ contribution.id }}'"
+                                            <button onclick="location.href='/order/update-contribution/{{ contribution.order.hash_id }}/{{ contribution.id }}'"
                                                     class="order-table-button">
                                                 <i class="fab fa-telegram-plane"></i>
                                             </button>
@@ -159,10 +158,6 @@
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
-                                            {#                                            <button formmethod="post"#}
-                                            {#                                                    class="order-table-button" onclick="location.href='/order/delete-contribution/{{ contribution.order.hash_id }}/{{ contribution.id }}/'">#}
-                                            {#                                                <i class="fas fa-trash"></i>#}
-                                            {#                                            </button>#}
                                         </div>
                                         <a style="color: red">{{ bad_param }}</a>
                                     </th>

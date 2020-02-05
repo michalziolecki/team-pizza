@@ -211,9 +211,101 @@ def delete_contribution(request: WSGIRequest):
 @login_required(login_url='/login-required')
 def update_contribution(request: WSGIRequest, hash_id: str, contribution_id: str):
     user = request.user
+    if request.method == "POST" and user.is_authenticated:
+        return update_contribution_post(request, hash_id, contribution_id)
+    elif request.method == "GET" and user.is_authenticated:
+        return update_contribution_get(request, hash_id, contribution_id)
+    elif not user.is_authenticated:
+        return render(request, 'TeamPizza/not-authenticated.html', status=401)
+    else:
+        return render(request, 'TeamPizza/bad-method.html', status=400)
+
+
+@login_required(login_url='/login-required')
+def update_contribution_get(request: WSGIRequest, hash_id: str, contribution_id: str):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    user = request.user
     context = {'user': user}
-    # POST method to delete order in db
-    return render(request, 'OrderApp/contribution-deleted.html', context)
+    if hash_id and contribution_id:
+        try:
+            order = Order.objects.filter(hash_id=hash_id).get()
+            contribution = ContributionOrder.objects.filter(id=contribution_id, order=order).get()
+            if contribution.contribution_owner.id == user.id:
+                context['contribution'] = contribution
+                context['hash_id'] = hash_id
+                context['contribution_id'] = contribution_id
+                return render(request, 'OrderApp/contribution-update.html', context)
+            else:
+                return render(request, 'TeamPizza/not-authenticated.html', status=401)
+        except DB_Error as db_err:
+            logger.error(f'Generating update contribution view by user {user.username} failed ! info: {db_err.args}')
+            context['bad_param'] = 'Not found in data base'
+        except BaseException as be:
+            logger.error(
+                f'Generating update contribution view by user {user.username} failed ! Base exception cached info: {be.args}')
+            context['bad_param'] = 'Not found in data base'
+
+        return render(request, 'OrderApp/contribution-not-exist.html', context, status=404)
+    return render(request, 'TeamPizza/operation-failed.html', context, status=400)
+
+
+@login_required(login_url='/login-required')
+def update_contribution_post(request: WSGIRequest, hash_id: str, contribution_id: str):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    user = request.user
+    context = {'user': user}
+    pieces = ''
+    size = ''
+    description = ''
+
+    try:
+        post_body: QueryDict = request.POST
+        params: dict = post_body.dict()
+        pieces = params['pieces']
+        size = params['size']
+        description = params['description']
+    except KeyError as ke:
+        logger.error(f'Key error while user try update contribution order, probably someone change form!'
+                     f'  info: {ke.args}')
+
+    if hash_id and contribution_id:
+        try:
+            order = Order.objects.filter(hash_id=hash_id).get()
+            contribution = ContributionOrder.objects.filter(id=contribution_id, order=order).get()
+            if contribution.contribution_owner.id == user.id:
+                pieces_int = 0
+                if pieces:
+                    try:
+                        pieces_int = int(pieces)
+                    except ValueError as ve:
+                        logger.error(f'Value error while user try join to order, number of pieces was not integer!'
+                                     f'  info: {ve.args}')
+                if pieces_int > 0 and size:
+                    ContributionOrder.objects.filter(id=contribution_id, order=order).update(
+                        pieces_number=pieces_int,
+                        size=size,
+                        add_contr_time=datetime.now(),
+                        was_updated=True,
+                        description=description
+                    )
+                    logger.debug(f'User: {user.username} update contribution in order "{hash_id}"! ')
+                    return redirect(f'/order/preview-order/{hash_id}/')
+                else:
+                    context['bad_param'] = 'Bad params!'
+                    context['contribution'] = contribution
+                    return render(request, 'OrderApp/contribution-update.html', context)
+            else:
+                return render(request, 'TeamPizza/not-authenticated.html', status=401)
+        except DB_Error as db_err:
+            logger.error(f'Update order by user {user.username} failed ! info: {db_err.args}')
+            context['bad_param'] = 'Not found in data base'
+        except BaseException as be:
+            logger.error(f'Update order by user {user.username} failed ! Base exception cached info: {be.args}')
+            context['bad_param'] = 'Not found in data base'
+        return render(request, 'OrderApp/contribution-not-exist.html', context, status=404)
+    else:
+        context['bad_param'] = 'Bad params! Someone change form!'
+        return render(request, 'TeamPizza/operation-failed.html', context, status=400)
 
 
 @login_required(login_url='/login-required')
