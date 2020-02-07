@@ -38,7 +38,7 @@
                             <th>Open time:</th>
                             <th>{{ order.open_time }}</th>
                         </tr>
-                        {% if order.is_open is False %}
+                        {% if not order.is_open %}
                             <tr>
                                 <th>Close Time:</th>
                                 <th>{{ order.close_time }}</th>
@@ -73,10 +73,14 @@
                                 <th>Close:</th>
                                 <th>
                                     <div class="order-option-preview">
-                                        <button onclick="location.href='/order/close/{{ order.hash_id }}'"
-                                                class="order-table-button">
-                                            <i class="fas fa-times"></i>
-                                        </button>
+                                        <form method="post" action="/order/close/">
+                                            {% csrf_token %}
+                                            <input hidden name="hash_id" type="text"
+                                                   value="{{ order.hash_id }}">
+                                            <button class="order-table-button">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                     <a style="color: red">{{ bad_param }}</a>
                                 </th>

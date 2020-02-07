@@ -10,7 +10,7 @@ urlpatterns = [
     path('join-to-order/<str:hash_id>/', join_order_view),
     path('join/<str:hash_id>/', join_order),
     path('update/<str:hash_id>/', update_order_view),
-    path('close/<str:hash_id>/', close_order),
+    path('close/', close_order),
     path('delete/', delete_order),
     path('update-contribution/<str:hash_id>/<str:contribution_id>/', update_contribution),
     path('delete-contribution/', delete_contribution)

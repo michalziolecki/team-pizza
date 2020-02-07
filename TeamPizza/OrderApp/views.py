@@ -149,11 +149,46 @@ def update_order_view(request: WSGIRequest, hash_id: str):
 
 
 @login_required(login_url='/login-required')
-def close_order(request: WSGIRequest, hash_id: str):
+def close_order(request: WSGIRequest):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user = request.user
     context = {'user': user}
-    # POST method to close order in db
-    return render(request, 'OrderApp/order-closed.html', context)
+    if request.method == "POST" and user.is_authenticated:
+        hash_id = get_one_item_from_post(request)
+        if hash_id:
+            try:
+                order = Order.objects.filter(hash_id=hash_id).get()
+                if order and order.order_owner.id == user.id:
+                    Order.objects.filter(hash_id=hash_id).update(
+                        is_open=False,
+                        close_time=datetime.now()
+                    )
+                    return redirect(f'/order/preview-order/{hash_id}')
+            except DB_Error as db_err:
+                logger.error(f'Close order by user {user.username} failed ! info: {db_err.args}')
+                context['bad_param'] = 'Something went wrong, try again'
+            except BaseException as be:
+                logger.error(f'Close order by user {user.username} failed ! Base exception cached info: {be.args}')
+                context['bad_param'] = 'Something went wrong, try again'
+            return redirect('/operation-failed/')
+
+    elif not user.is_authenticated:
+        return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
+    else:
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
+
+
+def get_one_item_from_post(request: WSGIRequest, item_name='hash_id') -> str:
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    item = ''
+    try:
+        post_body: QueryDict = request.POST
+        params: dict = post_body.dict()
+        item = params[item_name]
+    except KeyError as ke:
+        logger.error(f'Key error while user try remove order, probably someone change form!'
+                     f'  info: {ke.args}')
+    return item
 
 
 @login_required(login_url='/login-required')
@@ -162,14 +197,7 @@ def delete_order(request: WSGIRequest):
     user = request.user
     context = {'user': user}
     if request.method == "POST" and user.is_authenticated:
-        hash_id = ''
-        try:
-            post_body: QueryDict = request.POST
-            params: dict = post_body.dict()
-            hash_id = params['hash_id']
-        except KeyError as ke:
-            logger.error(f'Key error while user try remove order, probably someone change form!'
-                         f'  info: {ke.args}')
+        hash_id = get_one_item_from_post(request)
         try:
             order = Order.objects.filter(hash_id=hash_id).get()
             if order and order.order_owner.id == user.id:

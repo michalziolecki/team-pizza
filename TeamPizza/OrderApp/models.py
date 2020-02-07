@@ -10,7 +10,7 @@ class Order(models.Model):
     description = models.CharField(max_length=200, null=True)
     is_open = models.BooleanField(default=True, null=False)
     open_time = models.DateTimeField(null=False)
-    close_time = models.BooleanField(null=True)
+    close_time = models.DateTimeField(null=True)
 
 
 class ContributionOrder(models.Model):
