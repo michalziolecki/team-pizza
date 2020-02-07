@@ -85,10 +85,14 @@
                                 <th>Delete:</th>
                                 <th>
                                     <div class="order-option-preview">
-                                        <button onclick="location.href='/order/delete/{{ order.hash_id }}'"
-                                                class="order-table-button">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <form method="post" action="/order/delete/">
+                                            {% csrf_token %}
+                                            <input hidden name="hash_id" type="text"
+                                                   value="{{ order.hash_id }}">
+                                            <button class="order-table-button">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                     <a style="color: red">{{ bad_param }}</a>
                                 </th>

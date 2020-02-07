@@ -9,7 +9,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.utils.functional import SimpleLazyObject
 from django.http.request import QueryDict
 from .models import PizzaUser
-from django.db import Error as DB_Error
+from django.db import DatabaseError as DB_Error
 from .user_functions import is_usual_user_and_exist, insert_new_user_into_db, verify_password, \
     update_user_info_while_login, update_user_info_while_logout, get_last_user_login, \
     hash_and_salt_password, get_user_from_db
