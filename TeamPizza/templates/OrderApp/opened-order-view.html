@@ -14,7 +14,12 @@
             <span class="form-heading">Order information's</span>
             <div class="tab-window">
                 <div id="opened-order-id">
-                    <h2 class="order-header">Created Order</h2>
+                    {% if order.is_open %}
+                        <h2 class="order-header">Order - Open</h2>
+                    {% else %}
+                        <h2 class="order-header">Order - Closed</h2>
+                    {% endif  %}
+                    <h2 class="order-header">Order - </h2>
                     <table id="order-table-id" class="order-table">
                         <tr>
                             <th>Owner:</th>
@@ -31,14 +36,10 @@
                             </tr>
                         {% endif %}
                         <tr>
-                            <th>is open?</th>
-                            <th>{{ order.is_open }}</th>
-                        </tr>
-                        <tr>
                             <th>Open time:</th>
                             <th>{{ order.open_time }}</th>
                         </tr>
-                        {% if not order.is_open %}
+                        {% if not order.is_open and order.close_time %}
                             <tr>
                                 <th>Close Time:</th>
                                 <th>{{ order.close_time }}</th>

@@ -425,9 +425,12 @@ def join_order(request: WSGIRequest, hash_id: str):
                     was_updated=False,
                     description=description
                 )
-                contribution.save()
-                logger.debug(f'User: {db_user.username} join to order "{hash_id}"! ')
-                return redirect(f'/order/preview-order/{hash_id}/')
+                if order.is_open:
+                    contribution.save()
+                    logger.debug(f'User: {db_user.username} join to order "{hash_id}"! ')
+                    return redirect(f'/order/preview-order/{hash_id}/')
+                else:
+                    context['bad_param'] = 'This order is closed!'
             except DB_Error as db_err:
                 logger.error(f'Create order by user {user.username} failed ! info: {db_err.args}')
                 context['bad_param'] = 'Problem with database try again'
