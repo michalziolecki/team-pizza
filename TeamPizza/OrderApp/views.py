@@ -116,7 +116,7 @@ def create_order(request: WSGIRequest):
                 logger.debug(f'Hash_id created!  "{hash_id}" in type {type(hash_id)}, length {len(hash_id)}')
                 order = Order(order_owner=db_user,
                               hash_id=hash_id,
-                              prediction_order_time=predicted_datetime,
+                              prediction_order_time=parsed_datetime,
                               description=description,
                               is_open=True,
                               open_time=actual_time)
@@ -141,10 +141,93 @@ def create_order(request: WSGIRequest):
 
 
 @login_required(login_url='/login-required')
-def update_order_view(request: WSGIRequest, hash_id: str):
+def update_order(request: WSGIRequest, hash_id: str):
+    user = request.user
+    if request.method == "POST" and user.is_authenticated:
+        return update_order_post(request, hash_id)
+    elif request.method == "GET" and user.is_authenticated:
+        return update_order_get(request, hash_id)
+    elif not user.is_authenticated:
+        return render(request, 'TeamPizza/not-authenticated.html', status=401)
+    else:
+        return render(request, 'TeamPizza/bad-method.html', status=400)
+
+
+def update_order_get(request: WSGIRequest, hash_id: str):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user = request.user
     context = {'user': user}
-    # POST method to close order in db
+    if hash_id:
+        try:
+            order = Order.objects.filter(hash_id=hash_id).get()
+            if order.order_owner.id == user.id and order.is_open:
+                context['order'] = order
+                context['hash_id'] = hash_id
+                return render(request, 'OrderApp/order-update.html', context)
+            elif not order.is_open:
+                context['bad_param'] = f'Order has been closed at {order.close_time}'
+                return render(request, 'TeamPizza/not-authenticated.html', context)
+            else:
+                return render(request, 'TeamPizza/not-authenticated.html', status=401)
+        except DB_Error as db_err:
+            logger.error(f'Generating update order view by user {user.username} failed ! info: {db_err.args}')
+            context['bad_param'] = 'Not found in data base'
+        except BaseException as be:
+            logger.error(
+                f'Generating update order view by user {user.username} failed ! Base exception cached info: {be.args}')
+            context['bad_param'] = 'Not found in data base'
+
+        return render(request, 'OrderApp/order-not-exist.html', context, status=404)
+    return render(request, 'TeamPizza/operation-failed.html', context, status=400)
+
+
+def update_order_post(request: WSGIRequest, hash_id: str):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    user = request.user
+    context = {'user', user}
+    predicted_datetime = ''
+    description = ''
+
+    try:
+        post_body: QueryDict = request.POST
+        params: dict = post_body.dict()
+        predicted_datetime = params['predict-order-time']
+        description = params['description']
+    except KeyError as ke:
+        logger.error(f'Key error while user try create order, probably someone change form!'
+                     f'  info: {ke.args}')
+
+    # if description == 'Your order description...':
+    #     description = ''
+    db_user: PizzaUser = get_user_from_db(user.username)
+    parsed_datetime = datetime.strptime(predicted_datetime, "%Y-%m-%dT%H:%M")
+    actual_time = datetime.now()
+
+    if actual_time < parsed_datetime and db_user:
+        try:
+            order = Order.objects.filter(hash_id=hash_id).get()
+            if order and order.is_open and order.order_owner.id == user.id:
+                Order.objects.filter(hash_id=hash_id).update(
+                    prediction_order_time=parsed_datetime,
+                    description=description,
+                    open_time=actual_time)
+                logger.debug(f'Order updated! by user: {db_user.username}')
+                return redirect('/order/options/')
+            elif not order.is_open:
+                context['bad_param'] = f'Order has been closed at {order.close_time}'
+                return render(request, 'TeamPizza/not-authenticated.html', context)
+            else:
+                return render(request, 'TeamPizza/not-authenticated.html', status=401)
+        except DB_Error as db_err:
+            logger.error(f'Update order by user {user.username} failed ! info: {db_err.args}')
+            context['bad_param'] = 'Problem with database try again'
+        except BaseException as be:
+            logger.error(f'Update order by user {user.username} failed ! Base exception cached info: {be.args}')
+            context['bad_param'] = 'Problem with database try again'
+        return render(request, 'OrderApp/order-not-exist.html', context, status=404)
+    else:
+        context['bad_param'] = 'Date is incorrect'
+
     return render(request, 'OrderApp/order-update.html', context)
 
 

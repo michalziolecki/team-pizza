@@ -1,0 +1,45 @@
+{% extends "../TeamPizza/index.html" %}
+
+{% block title %} Update order - Team Pizza {% endblock %}
+
+{% block content %}
+    <div id="order-wrapper">
+        <div class="form-order-container">
+            <a id="form-exit" href="/">
+                <div class="cross">
+                    <div id="line-1" class="cross-line"></div>
+                    <div id="line-2" class="cross-line"></div>
+                </div>
+            </a>
+            <span class="form-heading">Update Order</span>
+            <div class="tab-window">
+                <div id="update-order-form">
+                    <form class="create-order-class-form" action="/order/update/{{ hash_id }}/" method="post"
+                          enctype='application/json'>
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <i class="fas fa-clock"></i>
+                            <input id="predict-order-datetime-id" name="predict-order-time" type="datetime-local"
+                                   value="{{ order.prediction_order_time }}" required>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-pen"></i>
+                            <textarea id="create-order-description" name="description" class="input-group">{{ order.description }}</textarea>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group">
+                            {% if bad_param %}
+                                <a style="color: black">{{ bad_param }}</a>
+                            {% endif %}
+                            <button id="createOrderButton">
+                                <i class="fab fa-telegram-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/create_order.js"></script>
+{% endblock %}
