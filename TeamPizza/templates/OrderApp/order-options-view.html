@@ -15,12 +15,11 @@
             <div class="tab-window">
                 <div class="tabs-account">
                     <button style="cursor: pointer; background-color: #ccc" id="join-to-order-tab"
-                            onclick="changeDivToOpenedOrders()">Opened
-                        orders
-                    </button>
+                            onclick="changeDivToOpenedOrders()">Opened</button>
                     <button style="cursor: pointer;" id="create-order-tab"
-                            onclick="changeDivToCreateOrder()">Create order
-                    </button>
+                            onclick="changeDivToClosedOrder()">Closed</button>
+                    <button style="cursor: pointer;" id="close-order-tab"
+                            onclick="changeDivToCreateOrder()">Create</button>
                 </div>
                 <div id="create-order-form" style="display: none">
                     <form class="create-order-class-form" action="/order/create/" method="post"
@@ -68,8 +67,6 @@
                                             class="order-table-button">
                                         <i class="fas fa-search"></i>
                                     </button>
-                                    {#                                    <a  id="preview-ref" class="order-table-ref" href="/order/preview-order/{{ order.hash_id }}"><i#}
-                                    {#                                            class="fas fa-search"></i></a>#}
                                 </td>
                                 <td>
                                     <button id="join-ref"
@@ -77,9 +74,42 @@
                                             class="order-table-button">
                                         <i class="fas fa-sign-in-alt"></i>
                                     </button>
-{#                                    <a id="join-ref" class="order-table-ref"#}
-{#                                       href="/order/join-to-order/{{ order.hash_id }}"><i#}
-{#                                            class="fas fa-sign-in-alt"></i></a>#}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    {% if bad_param %}
+                        <a style="color: black">{{ bad_param }}</a>
+                    {% endif %}
+                </div>
+                <div id="close-order-table" style="display: none;">
+                    <br>
+                    <table id="table-with-open-orders" style="width:90%; text-align: center;">
+                        <tr>
+                            <th>Owner</th>
+                            <th>Predicted Deadline</th>
+                            <th>Description</th>
+                            <th>Preview</th>
+                            <th>Join</th>
+                        </tr>
+                        {% for cl_order in close_order_list %}
+                            <tr>
+                                <td>{{ cl_order.order_owner }}</td>
+                                <td>{{ cl_order.prediction_order_time }}</td>
+                                <td>{{ cl_order.description }}</td>
+                                <td>
+                                    <button id="preview-ref"
+                                            onclick="location.href='/order/preview-order/{{ cl_order.hash_id }}'"
+                                            class="order-table-button">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button id="join-ref"
+                                            onclick="location.href='/order/join-to-order/{{ cl_order.hash_id }}'"
+                                            class="order-table-button">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                    </button>
                                 </td>
                             </tr>
                         {% endfor %}

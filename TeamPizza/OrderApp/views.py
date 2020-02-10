@@ -30,6 +30,7 @@ def order_options_view(request: WSGIRequest):
         if db_user:
             try:
                 context['order_list'] = Order.objects.filter(is_open=True).order_by('prediction_order_time')
+                context['close_order_list'] = Order.objects.filter(is_open=False).order_by('close_time')
             except DB_Error as db_err:
                 logger.error(f'Getting orders from database failed ! info: {db_err.args}')
                 context['bad_param'] = 'Problem with database try again'
