@@ -16,9 +16,9 @@
                 <div class="tabs-account">
                     <button style="cursor: pointer; background-color: #ccc" id="join-to-order-tab"
                             onclick="changeDivToOpenedOrders()">Opened</button>
-                    <button style="cursor: pointer;" id="create-order-tab"
-                            onclick="changeDivToClosedOrder()">Closed</button>
                     <button style="cursor: pointer;" id="close-order-tab"
+                            onclick="changeDivToClosedOrder()">Closed</button>
+                    <button style="cursor: pointer;" id="create-order-tab"
                             onclick="changeDivToCreateOrder()">Create</button>
                 </div>
                 <div id="create-order-form" style="display: none">
@@ -87,7 +87,7 @@
                     <table id="table-with-open-orders" style="width:90%; text-align: center;">
                         <tr>
                             <th>Owner</th>
-                            <th>Predicted Deadline</th>
+                            <th>Closed time</th>
                             <th>Description</th>
                             <th>Preview</th>
                             <th>Join</th>

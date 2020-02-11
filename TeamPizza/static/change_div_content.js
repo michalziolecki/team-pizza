@@ -47,12 +47,12 @@ const createBackgroundOrderTabColor = (createColorTab, ordersColorTab, closeColo
     var createOrderTab = document.getElementById('create-order-tab');
     var chooseOrderTab = document.getElementById('join-to-order-tab');
     var closedOrderTab = document.getElementById('close-order-tab');
-    closedOrderTab.style.backgroundColor = closeColorTab;
     createOrderTab.style.backgroundColor = createColorTab;
     chooseOrderTab.style.backgroundColor = ordersColorTab;
+    closedOrderTab.style.backgroundColor = closeColorTab;
 };
 
-const changeDivToClosedOrder  = (createColorTab, ordersColorTab) => {
+const changeDivToClosedOrder  = () => {
     var createOrderTab = document.getElementById('create-order-form');
     var chooseOrderTab = document.getElementById('choose-order-table');
     var closedOrderTab = document.getElementById('close-order-table');
