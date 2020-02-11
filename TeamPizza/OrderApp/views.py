@@ -466,7 +466,7 @@ def join_order_view(request: WSGIRequest, hash_id: str):
 def join_order(request: WSGIRequest, hash_id: str):
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user = request.user
-    context = {'user': user}
+    context = {'user': user, 'hash_id': hash_id}
     if request.method == 'POST' and user.is_authenticated:
         pieces = ''
         size = ''

@@ -90,7 +90,6 @@
                             <th>Closed time</th>
                             <th>Description</th>
                             <th>Preview</th>
-                            <th>Join</th>
                         </tr>
                         {% for cl_order in close_order_list %}
                             <tr>
@@ -102,13 +101,6 @@
                                             onclick="location.href='/order/preview-order/{{ cl_order.hash_id }}'"
                                             class="order-table-button">
                                         <i class="fas fa-search"></i>
-                                    </button>
-                                </td>
-                                <td>
-                                    <button id="join-ref"
-                                            onclick="location.href='/order/join-to-order/{{ cl_order.hash_id }}'"
-                                            class="order-table-button">
-                                        <i class="fas fa-sign-in-alt"></i>
                                     </button>
                                 </td>
                             </tr>
