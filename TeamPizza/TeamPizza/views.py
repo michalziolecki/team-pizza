@@ -8,11 +8,9 @@ def home_view(request):
     return render(request, 'TeamPizza/index.html', context)
 
 
-@login_required(login_url='/login-required')
+# @login_required(login_url='/login-required')
 def about_view(request):
-    user = request.user
-    context = {'user': user}
-    return render(request, 'TeamPizza/about.html', context)
+    return render(request, 'TeamPizza/about.html')
 
 
 # @login_required(login_url='/login-required')

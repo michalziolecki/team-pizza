@@ -203,6 +203,21 @@ def remove_account(request: WSGIRequest):
 
 @login_required(login_url='/login-required')
 def users_view(request: WSGIRequest):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user = request.user
     context = {'user': user}
-    return render(request, 'UserApp/users.html', context)
+    if request.method == "GET" and user.is_authenticated:
+        try:
+            context['users_list'] = PizzaUser.objects.all()
+        except DB_Error as db_err:
+            logger.error(f'Get all users from db failed ! info: {db_err.args}')
+            context['bad_param'] = 'Problem with database try again'
+        except BaseException as be:
+            logger.error(f'Get all users from db failed! Base exception cached info: {be.args}')
+            context['bad_param'] = 'Problem with database try again'
+        return render(request, 'UserApp/users.html', context)
+    elif not user.is_authenticated:
+        return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
+    else:
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
+

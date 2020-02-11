@@ -11,9 +11,10 @@
                     <div id="line-2" class="cross-line"></div>
                 </div>
             </a>
-            <span class="form-heading">Users list and privileges- in progress..</span>
+            <span class="form-heading">Users list and privileges</span>
             <div class="tab-window">
                 <div id="users-table">
+                    <a>{{ bad_param }}</a>
                     <br>
                     <table id="table-with-users" style="width:90%; text-align: center;">
                         <tr>
@@ -27,7 +28,13 @@
                                 <td>{{ user.username }}</td>
                                 <td>{{ user.first_name }}</td>
                                 <td>{{ user.last_name }}</td>
-                                <td>{{ user.role }}</td>
+                                {% if user.role == 'A' %}
+                                    <td>Admin</td>
+                                {% elif user.role == 'M' %}
+                                    <td>Moderator</td>
+                                {% else %}
+                                    <td>User</td>
+                                {% endif %}
                             </tr>
                         {% endfor %}
                     </table>

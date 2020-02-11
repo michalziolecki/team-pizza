@@ -28,6 +28,12 @@
                         {% csrf_token %}
                         <div class="input-group">
                             <i class="fas fa-lock"></i>
+                            <input name="old_password" type="password" placeholder="Old Password..."
+                                   required>
+                            <span class="bar"></span>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
                             <input id="updatePwd" name="password" type="password" placeholder="Password..." required>
                             <span class="bar"></span>
                         </div>
@@ -35,12 +41,6 @@
                             <i class="fas fa-lock"></i>
                             <input id="updateConfPwd" name="confirm_password" type="password"
                                    placeholder="Confirm password..."
-                                   required>
-                            <span class="bar"></span>
-                        </div>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            <input name="old_password" type="password" placeholder="Old Password..."
                                    required>
                             <span class="bar"></span>
                         </div>
@@ -73,7 +73,7 @@
                             {% if bad_rm_params %}
                                 <a style="color: black">{{ bad_rm_params }}</a>
                             {% endif %}
-                            <button id="removeButton" >
+                            <button id="removeButton">
                                 <i class="fab fa-telegram-plane"></i>
                             </button>
                         </div>
