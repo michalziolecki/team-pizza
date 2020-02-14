@@ -52,6 +52,9 @@
                         <option value="A">Admin</option>
                         <option value="M">Moderator</option>
                         <option value="U">User</option>
+                        {% if user.role == 'R' %}
+                            <option value="R">Root</option>
+                        {%  endif %}
                     </select>
                     <span class="bar"></span>
                 </div>
@@ -60,9 +63,6 @@
                         <i class="fab fa-telegram-plane"></i>
                     </button>
                 </div>
-                <!-- <div class="switch-login"> -->
-                <!-- <a href="/user/log-form/">Already have an account? <span>Login</span></a> -->
-                <!-- </div> -->
             </form>
         </div>
     </div>

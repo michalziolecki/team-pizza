@@ -91,7 +91,7 @@ def create_order(request: WSGIRequest):
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user = request.user
     context = {'user': user}
-    if request.method == 'POST' and user.is_authenticated:
+    if request.method == 'POST' and user.is_authenticated and user.role != 'U':
         predicted_datetime = ''
         description = ''
 
@@ -135,7 +135,7 @@ def create_order(request: WSGIRequest):
 
         return render(request, 'OrderApp/order-options-view.html', context)
 
-    elif not user.is_authenticated:
+    elif not user.is_authenticated or user.role == 'U':
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
     else:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)

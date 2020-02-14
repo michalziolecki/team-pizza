@@ -25,9 +25,11 @@
             <li>
                 <a href="/user/users/">Users</a>
             </li>
-            <li>
-                <a href="/user/sign-up-form">Register</a>
-            </li>
+            {% if user.role != 'U' %}
+                <li>
+                    <a href="/user/sign-up-form">Register</a>
+                </li>
+            {% endif %}
             <li>
                 <a href="/order/options/">Order</a>
             </li>

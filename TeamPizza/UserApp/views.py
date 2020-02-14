@@ -12,7 +12,7 @@ from .models import PizzaUser
 from django.db import DatabaseError as DB_Error
 from .user_functions import is_usual_user_and_exist, insert_new_user_into_db, verify_password, \
     update_user_info_while_login, update_user_info_while_logout, get_last_user_login, \
-    hash_and_salt_password, get_user_from_db
+    hash_and_salt_password, get_user_from_db, is_root_by_role
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 import re
@@ -76,17 +76,23 @@ def sign_up_view(request: WSGIRequest):
 def sign_up(request: WSGIRequest) -> HttpResponse:
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user: SimpleLazyObject = request.user
-    logger.info(f'New user registered by {user.username}, user type: {type(user.username)}')
+    post_body: QueryDict = request.POST
+    params: dict = post_body.dict()
     context = {'user': user}
-    if request.method == 'POST' and user.is_authenticated:
+
+    if params['role'] == 'R' and not is_root_by_role(user.role):
+        return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
+
+    if request.method == 'POST' and user.is_authenticated and user.role != 'U':
         is_usual, exist = is_usual_user_and_exist(user.username)
         if not is_usual and exist:
             template = insert_new_user_into_db(request, logger)
+            logger.info(f'New user registered by {user.username}')
         else:
             template = 'TeamPizza/not-authenticated.html'
 
         return render(request, template, context)
-    elif not user.is_authenticated:
+    elif not user.is_authenticated or user.role == 'U':
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
     else:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)

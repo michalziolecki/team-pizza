@@ -32,6 +32,8 @@
                                     <td>Admin</td>
                                 {% elif user.role == 'M' %}
                                     <td>Moderator</td>
+                                {% elif user.role == 'R' %}
+                                    <td>Root</td>
                                 {% else %}
                                     <td>User</td>
                                 {% endif %}
