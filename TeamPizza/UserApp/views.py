@@ -227,3 +227,16 @@ def users_view(request: WSGIRequest):
     else:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)
 
+
+@login_required(login_url='/login-required')
+def change_privileges(request: WSGIRequest):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    user = request.user
+    context = {'user': user}
+    if request.method == "POST" and user.is_authenticated and (user.role == 'A' or user.role == 'R'):
+
+        return redirect('/user/users/')
+    elif not user.is_authenticated:
+        return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
+    else:
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)

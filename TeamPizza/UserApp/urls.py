@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import log_form_view, login_user, sign_up, sign_up_view, logout_user, \
-    account_view, update_account, remove_account, users_view
+    account_view, update_account, remove_account, users_view, change_privileges
 
 urlpatterns = [
     path('login/', login_user),
@@ -11,5 +11,6 @@ urlpatterns = [
     path('account/', account_view),
     path('update-account/', update_account),
     path('remove-account/', remove_account),
+    path('change-privileges/', change_privileges),
     path('users/', users_view)
 ]
