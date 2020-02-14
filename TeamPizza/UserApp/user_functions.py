@@ -41,6 +41,13 @@ def is_superuser_by_role(role: str) -> bool:
     return is_super_user
 
 
+def is_root_by_role(role: str) -> bool:
+    is_root = False
+    if role == 'R':
+        is_root = True
+    return is_root
+
+
 def check_user_role(login: str) -> str:
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     role = ''

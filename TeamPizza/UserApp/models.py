@@ -5,10 +5,12 @@ from django.conf import settings
 
 # Main user class
 class PizzaUser(AbstractUser):
+    ROOT = 'R'
     ADMIN = 'A'
     MODERATOR = 'M'
     USER = 'U'
     ROLES = [
+        (ROOT, 'Root'),
         (ADMIN, 'Admin'),
         (MODERATOR, 'Moderator'),
         (USER, 'UserApp')
