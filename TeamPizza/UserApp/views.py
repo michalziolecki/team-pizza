@@ -9,7 +9,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.utils.functional import SimpleLazyObject
 from django.http.request import QueryDict
 from .models import PizzaUser
-from django.db import DatabaseError as DB_Error
+from django.db import Error as DB_Error
 from .user_functions import is_usual_user_and_exist, insert_new_user_into_db, verify_password, \
     update_user_info_while_login, update_user_info_while_logout, get_last_user_login, \
     hash_and_salt_password, get_user_from_db, is_root_by_role
@@ -231,12 +231,51 @@ def users_view(request: WSGIRequest):
 @login_required(login_url='/login-required')
 def change_privileges(request: WSGIRequest):
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
-    user = request.user
-    context = {'user': user}
-    if request.method == "POST" and user.is_authenticated and (user.role == 'A' or user.role == 'R'):
+    admin_user = request.user
+    context = {'user': admin_user}
+    role_value = {'R': 0, 'A': 1, 'M': 2, 'U': 3}
 
-        return redirect('/user/users/')
-    elif not user.is_authenticated:
+    def confirm_update_privileges(update_user: PizzaUser, admin: PizzaUser, role_new: str) -> bool:
+        confirm = True
+        if update_user.role == 'R':
+            confirm = False
+        if role_value[updating_user.role] <= role_value[admin.role]:
+            confirm = False
+        if role_value[role_new] < role_value[admin.role]:
+            confirm = False
+
+        return confirm
+
+    if request.method == "POST" and admin_user.is_authenticated and role_value[admin_user.role] <= 1:
+        user_id = ''
+        username = ''
+        new_role = ''
+        try:
+            post_body: QueryDict = request.POST
+            params: dict = post_body.dict()
+            user_id = params['id']
+            username = params['nickname']
+            new_role = params['role']
+        except KeyError as ke:
+            logger.error(f'Key error while admin {admin_user.username} try update role of user {username}, '
+                         f'probably someone change form! info: {ke.args}')
+
+        if user_id and username and new_role:
+            updating_user: PizzaUser = get_user_from_db(username)
+            if confirm_update_privileges(updating_user, admin_user, new_role):
+                try:
+                    PizzaUser.objects.filter(username=updating_user.username).update(role=new_role)
+                    return redirect('/user/users/')
+                except DB_Error as db_err:
+                    logger.error(f'Update user password field failed ! info: {db_err.args}')
+                    context['bad_param'] = 'Problem with database while updating - try again!'
+                except BaseException as be:
+                    logger.error(f'Update user password field failed! Base exception cached info: {be.args}')
+                    context['bad_param'] = 'Problem with database while updating - try again!'
+                return render(request, 'TeamPizza/operation-failed.html', context, status=500)
+            else:
+                return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
+    elif not admin_user.is_authenticated or role_value[admin_user.role] <= 1:
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
     else:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)

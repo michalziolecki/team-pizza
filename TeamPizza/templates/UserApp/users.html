@@ -38,7 +38,7 @@
                                             {% csrf_token %}
                                                 <input hidden name="id" type="text" value="{{ l_user.id }}" required>
                                                 <input hidden name="nickname" type="text" value="{{ l_user.username }}" required>
-                                                <select class="select-role" name="update-role"
+                                                <select class="select-role" name="role"
                                                         onchange="this.form.submit()">
                                                     {% if l_user.role == 'A' %}
                                                         <option value="A" selected>Admin</option>
