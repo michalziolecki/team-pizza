@@ -30,7 +30,7 @@ def order_options_view(request: WSGIRequest):
         if db_user:
             try:
                 context['order_list'] = Order.objects.filter(is_open=True).order_by('prediction_order_time')
-                context['close_order_list'] = Order.objects.filter(is_open=False).order_by('close_time')
+                context['close_order_list'] = Order.objects.filter(is_open=False).order_by('close_time')[:5]
             except DB_Error as db_err:
                 logger.error(f'Getting orders from database failed ! info: {db_err.args}')
                 context['bad_param'] = 'Problem with database try again'
@@ -58,7 +58,6 @@ def opened_order_view(request: WSGIRequest, hash_id: str):
             try:
                 order = Order.objects.filter(hash_id=hash_id).get()
                 contributions = ContributionOrder.objects.filter(order=order).order_by('add_contr_time')
-                # pobrać powiązane encje
                 small_pieces = 0
                 big_pieces = 0
                 logger.debug(f'contributions size: {len(contributions)}')
