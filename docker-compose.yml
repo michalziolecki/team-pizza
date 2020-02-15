@@ -19,7 +19,7 @@ services:
     restart: always
     container_name: nginx
     ports:
-      - "8080:8000"
+      - "8080:8000" # for teldat.pizza set 80:8000
       - "443:443"
     volumes:
       - ./nginx_config/conf.d:/etc/nginx/conf.d

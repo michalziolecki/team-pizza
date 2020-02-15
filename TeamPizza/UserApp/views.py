@@ -72,15 +72,27 @@ def sign_up_view(request: WSGIRequest):
     return render(request, 'UserApp/register.html', context)
 
 
+def self_sign_up_view(request: WSGIRequest):
+    user = request.user
+    context = {'user': user}
+    return render(request, 'UserApp/register.html', context)
+
+
 @login_required(login_url='/login-required')
 def sign_up(request: WSGIRequest) -> HttpResponse:
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user: SimpleLazyObject = request.user
-    post_body: QueryDict = request.POST
-    params: dict = post_body.dict()
     context = {'user': user}
+    try:
+        post_body: QueryDict = request.POST
+        params: dict = post_body.dict()
+        selected_role = params['role']
+    except KeyError as ke:
+        logger.error(f'Sign up method failed while parsing params! info -> params: {params},'
+                     f' user: {user.username}, dict exception info: {ke.args}')
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
 
-    if params['role'] == 'R' and not is_root_by_role(user.role):
+    if selected_role == 'R' and not is_root_by_role(user.role):
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
 
     if request.method == 'POST' and user.is_authenticated and user.role != 'U':
@@ -93,6 +105,33 @@ def sign_up(request: WSGIRequest) -> HttpResponse:
 
         return render(request, template, context)
     elif not user.is_authenticated or user.role == 'U':
+        return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
+    else:
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
+
+
+def self_sign_up(request: WSGIRequest) -> HttpResponse:
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    user: SimpleLazyObject = request.user
+    context = {'user': user}
+    try:
+        post_body: QueryDict = request.POST
+        params: dict = post_body.dict()
+        selected_role = params['role']
+        mail = params['mail']
+    except KeyError as ke:
+        logger.error(f'Sign up method failed while parsing params! info -> params: {params},'
+                     f' user: {user.username}, dict exception info: {ke.args}')
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
+
+    mail_regex = re.compile('^.*@teldat\.com\.pl$')
+    correct_mail = mail_regex.match(mail)
+
+    if request.method == 'POST' and selected_role == 'U' and correct_mail:
+        template = insert_new_user_into_db(request, logger)
+        logger.info(f'New user registered by mail: {mail}')
+        return render(request, template, context)
+    elif selected_role != 'U' or not correct_mail:
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
     else:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)
