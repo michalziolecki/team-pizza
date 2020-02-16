@@ -20,6 +20,12 @@ def operation_success(request):
     return render(request, 'TeamPizza/operation-success.html', context)
 
 
+def confirm_email(request):
+    user = request.user
+    context = {'user': user}
+    return render(request, 'TeamPizza/confirm-signup.html', context)
+
+
 # @login_required(login_url='/login-required')
 def operation_failed(request):
     user = request.user

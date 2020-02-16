@@ -130,6 +130,7 @@ def self_sign_up(request: WSGIRequest) -> HttpResponse:
     if request.method == 'POST' and selected_role == 'U' and correct_mail:
         template = insert_new_user_into_db(request, logger)
         logger.info(f'New user registered by mail: {mail}')
+        # sending email to confirm account
         return render(request, template, context)
     elif selected_role != 'U' or not correct_mail:
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
