@@ -19,6 +19,19 @@ class PizzaUser(AbstractUser):
     username = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=572)
     role = models.CharField(max_length=1, choices=ROLES, default=USER)
+    is_logged = models.BooleanField(default=False, null=False)
+
+
+class ConfirmAccount(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    token = models.CharField(max_length=100, unique=True)
+    deadline = models.DateTimeField(null=False)
+
+
+class RestorePassword(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    token = models.CharField(max_length=100, unique=True)
+    deadline = models.DateTimeField(null=False)
 
 
 class LoginInformation(models.Model):

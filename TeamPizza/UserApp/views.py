@@ -15,6 +15,10 @@ from .user_functions import is_usual_user_and_exist, insert_new_user_into_db, ve
     hash_and_salt_password, get_user_from_db, is_root_by_role
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.core.mail import send_mail
+from smtplib import SMTPAuthenticationError
+from TeamPizza.settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
+
 import re
 
 
@@ -47,13 +51,17 @@ def login_user(request: WSGIRequest):
             elif PizzaUser.objects.filter(email=username).exists():
                 log_user = PizzaUser.objects.get(email=username)
                 stored_pwd = log_user.password
-        if stored_pwd and log_user and verify_password(password=password, stored_password=stored_pwd):
+        if stored_pwd and log_user \
+                and verify_password(password=password, stored_password=stored_pwd) \
+                and log_user.is_active:
             logger.debug('request for login user and verify password: success')
             update_user_info_while_login(request, log_user)
             login(request, log_user)
             return redirect('/')
+        elif not log_user.is_active:
+            context['bad_params'] = 'Confirm Your email!'
         else:
-            context['bad_params'] = 'Wrong login or password'
+            context['bad_params'] = 'Wrong login or password!'
     else:
         template = 'TeamPizza/not-authenticated.html'
     return render(request, template, context)
@@ -87,6 +95,8 @@ def sign_up(request: WSGIRequest) -> HttpResponse:
         post_body: QueryDict = request.POST
         params: dict = post_body.dict()
         selected_role = params['role']
+        username = params['nickname']
+        mail = params['mail']
     except KeyError as ke:
         logger.error(f'Sign up method failed while parsing params! info -> params: {params},'
                      f' user: {user.username}, dict exception info: {ke.args}')
@@ -98,8 +108,33 @@ def sign_up(request: WSGIRequest) -> HttpResponse:
     if request.method == 'POST' and user.is_authenticated and user.role != 'U':
         is_usual, exist = is_usual_user_and_exist(user.username)
         if not is_usual and exist:
-            template = insert_new_user_into_db(request, logger)
+            template, confirm_token = insert_new_user_into_db(request, logger)
             logger.info(f'New user registered by {user.username}')
+            new_user = get_user_from_db(username)
+            if new_user and confirm_token:
+                logger.info(f'New user registered - his/her email: {mail}')
+                subject = 'Hello ! Welcome on pizza.teldat portal!'
+                message = f'This is verifying message. \n' \
+                          f'click this link or copy into browser: \n' \
+                          f'<h1><a href="https://teldat.pizza/confirm/{confirm_token}/">' \
+                          f'https://teldat.pizza/confirm/{confirm_token}/</a></h1>'
+                recipient = new_user.email
+                try:
+                    send_mail(subject, message, EMAIL_HOST_USER, [recipient], fail_silently=False)
+                    context['params'] = 'New user must to confirm email'
+                    template = 'UserApp/sign-up-success.html'
+                except SMTPAuthenticationError as smtp_err:
+                    logger.error(f'SMTPAuthenticationError while sending email, info: user - {user.username},'
+                                 f' email - {recipient}. What: {smtp_err.args} ')
+                    context['email'] = recipient
+                    template = 'UserApp/sending-email-error.html'
+                except BaseException as be:
+                    logger.error(f'BaseException while sending email, info: user - {user.username},'
+                                 f' email - {recipient}. What: {be.args} ')
+                    context['email'] = recipient
+                    template = 'UserApp/sending-email-error.html'
+
+            return render(request, template, context)
         else:
             template = 'TeamPizza/not-authenticated.html'
 
@@ -119,8 +154,9 @@ def self_sign_up(request: WSGIRequest) -> HttpResponse:
         params: dict = post_body.dict()
         selected_role = params['role']
         mail = params['mail']
+        username = params['nickname']
     except KeyError as ke:
-        logger.error(f'Sign up method failed while parsing params! info -> params: {params},'
+        logger.error(f'Sign up method failed while parsing params!'
                      f' user: {user.username}, dict exception info: {ke.args}')
         return render(request, 'TeamPizza/bad-method.html', context, status=400)
 
@@ -128,9 +164,29 @@ def self_sign_up(request: WSGIRequest) -> HttpResponse:
     correct_mail = mail_regex.match(mail)
 
     if request.method == 'POST' and selected_role == 'U' and correct_mail:
-        template = insert_new_user_into_db(request, logger)
-        logger.info(f'New user registered by mail: {mail}')
-        # sending email to confirm account
+        template, confirm_token = insert_new_user_into_db(request, logger)
+        new_user = get_user_from_db(username)
+        if new_user and confirm_token:
+            logger.info(f'New user registered - his/her email: {mail}')
+            subject = 'Hello ! Welcome on pizza.teldat portal!'
+            message = f'This is verifying message. \n' \
+                      f'click this link or copy into browser: \n' \
+                      f'<h1><a href="https://teldat.pizza/confirm/{confirm_token}/">' \
+                      f'https://teldat.pizza/confirm/{confirm_token}/</a></h1>'
+            recipient = new_user.email
+            try:
+                send_mail(subject, message, EMAIL_HOST_USER, [recipient], fail_silently=False)
+                return redirect('/confirm-email/')
+            except SMTPAuthenticationError as smtp_err:
+                logger.error(f'SMTPAuthenticationError while sending email, info: user - {user.username},'
+                             f' email - {recipient}. What: {smtp_err.args} ')
+                context['email'] = recipient
+                template = 'UserApp/sending-email-error.html'
+            except BaseException as be:
+                logger.error(f'BaseException while sending email, info: user - {user.username},'
+                             f' email - {recipient}. What: {be.args} ')
+                context['email'] = recipient
+                template = 'UserApp/sending-email-error.html'
         return render(request, template, context)
     elif selected_role != 'U' or not correct_mail:
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
