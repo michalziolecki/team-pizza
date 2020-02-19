@@ -8,7 +8,7 @@ from logging import Logger
 from django.core.handlers.wsgi import WSGIRequest
 from django.utils.functional import SimpleLazyObject
 from django.http.request import QueryDict
-from .models import PizzaUser
+from .models import PizzaUser, ConfirmAccount
 from django.db import Error as DB_Error
 from .user_functions import is_usual_user_and_exist, insert_new_user_into_db, verify_password, \
     update_user_info_while_login, update_user_info_while_logout, get_last_user_login, \
@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
 from smtplib import SMTPAuthenticationError
+from django.utils import timezone
 from TeamPizza.settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
 
 import re
@@ -59,7 +60,7 @@ def login_user(request: WSGIRequest):
             login(request, log_user)
             return redirect('/')
         elif not log_user.is_active:
-            context['bad_params'] = 'Confirm Your email!'
+            context['bad_params'] = 'Confirm Your account by email!'
         else:
             context['bad_params'] = 'Wrong login or password!'
     else:
@@ -97,6 +98,7 @@ def sign_up(request: WSGIRequest) -> HttpResponse:
         selected_role = params['role']
         username = params['nickname']
         mail = params['mail']
+        password = params['password']
     except KeyError as ke:
         logger.error(f'Sign up method failed while parsing params! info -> params: {params},'
                      f' user: {user.username}, dict exception info: {ke.args}')
@@ -105,7 +107,10 @@ def sign_up(request: WSGIRequest) -> HttpResponse:
     if selected_role == 'R' and not is_root_by_role(user.role):
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
 
-    if request.method == 'POST' and user.is_authenticated and user.role != 'U':
+    mail_regex = re.compile('^.*@teldat\.com\.pl$')  # '.*'
+    correct_mail = mail_regex.match(mail)
+
+    if request.method == 'POST' and user.is_authenticated and user.role != 'U' and correct_mail:
         is_usual, exist = is_usual_user_and_exist(user.username)
         if not is_usual and exist:
             template, confirm_token = insert_new_user_into_db(request, logger)
@@ -115,9 +120,9 @@ def sign_up(request: WSGIRequest) -> HttpResponse:
                 logger.info(f'New user registered - his/her email: {mail}')
                 subject = 'Hello ! Welcome on pizza.teldat portal!'
                 message = f'This is verifying message. \n' \
+                          f'Your temporary password is: "{password}" - remember to change this password!' \
                           f'click this link or copy into browser: \n' \
-                          f'<h1><a href="https://teldat.pizza/confirm/{confirm_token}/">' \
-                          f'https://teldat.pizza/confirm/{confirm_token}/</a></h1>'
+                          f'https://teldat.pizza/user/confirm/{username}/{confirm_token}/'
                 recipient = new_user.email
                 try:
                     send_mail(subject, message, EMAIL_HOST_USER, [recipient], fail_silently=False)
@@ -139,7 +144,9 @@ def sign_up(request: WSGIRequest) -> HttpResponse:
             template = 'TeamPizza/not-authenticated.html'
 
         return render(request, template, context)
-    elif not user.is_authenticated or user.role == 'U':
+    elif not user.is_authenticated or user.role == 'U' or not correct_mail:
+        if not correct_mail:
+            context['bad_param'] = 'Incorrect mail domain'
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
     else:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)
@@ -160,7 +167,7 @@ def self_sign_up(request: WSGIRequest) -> HttpResponse:
                      f' user: {user.username}, dict exception info: {ke.args}')
         return render(request, 'TeamPizza/bad-method.html', context, status=400)
 
-    mail_regex = re.compile('^.*@teldat\.com\.pl$')
+    mail_regex = re.compile('^.*@teldat\.com\.pl$')  # '.*'
     correct_mail = mail_regex.match(mail)
 
     if request.method == 'POST' and selected_role == 'U' and correct_mail:
@@ -171,8 +178,7 @@ def self_sign_up(request: WSGIRequest) -> HttpResponse:
             subject = 'Hello ! Welcome on pizza.teldat portal!'
             message = f'This is verifying message. \n' \
                       f'click this link or copy into browser: \n' \
-                      f'<h1><a href="https://teldat.pizza/confirm/{confirm_token}/">' \
-                      f'https://teldat.pizza/confirm/{confirm_token}/</a></h1>'
+                      f'https://teldat.pizza/user/confirm/{username}/{confirm_token}/'
             recipient = new_user.email
             try:
                 send_mail(subject, message, EMAIL_HOST_USER, [recipient], fail_silently=False)
@@ -194,8 +200,42 @@ def self_sign_up(request: WSGIRequest) -> HttpResponse:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)
 
 
+def confirm_mail_by_token(request: WSGIRequest, nickname, token: str):
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    context = {}
+    if request.method == 'GET' and nickname and token:
+        user = get_user_from_db(nickname)
+        confirm = ''
+        if user:
+            try:
+                confirm = ConfirmAccount.objects.filter(user=user, token=token).get()
+            except DB_Error as db_err:
+                logger.error(f'Confirm account by token, failed ! info: {db_err.args}')
+            except BaseException as be:
+                logger.error(f'Confirm account by token, failed ! Base exception cached info: {be.args}')
+        if confirm and confirm.deadline > timezone.now():
+            try:
+                PizzaUser.objects.filter(id=user.id, username=user.username).update(is_active=True)
+                confirm.delete()
+                context['data'] = 'Account confirmed'
+            except DB_Error as db_err:
+                logger.error(f'Activate account and remove confirm token, failed ! info: {db_err.args}')
+                context['data'] = 'Account activation failed ! \n Contact with admin or try again.'
+            except BaseException as be:
+                logger.error(
+                    f'Activate account and remove confirm token, failed ! Base exception cached info: {be.args}')
+                context['data'] = 'Account activation failed ! \n Contact with admin or try again.'
+        elif confirm and confirm.deadline < timezone.now():
+            context['data'] = 'Link has expired'
+        else:
+            context['data'] = 'Link not exist'
+        return render(request, 'UserApp/confirm-by-token.html', context)
+    else:
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
+
+
 @login_required(login_url='/login-required')
-def account_view(request):
+def account_view(request: WSGIRequest):
     user = request.user
     login_list = get_last_user_login(user=user)
     context = {
@@ -206,7 +246,7 @@ def account_view(request):
 
 
 @login_required(login_url='/login-required')
-def update_account(request):
+def update_account(request: WSGIRequest):
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user = request.user
     context = {'user': user}

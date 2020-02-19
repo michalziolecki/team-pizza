@@ -123,7 +123,7 @@ def insert_new_user_into_db(request: WSGIRequest, logger: Logger) -> tuple:
             new_user.save()
             logger.debug(f'New user is {new_user.username}')
             confirm_token = default_token_generator.make_token(new_user)
-            token_expires = timezone.now() + timezone.timedelta(hours=1)
+            token_expires = timezone.now() + timezone.timedelta(hours=24)
             logger.debug(f'Generated token for user {new_user.username} is "{confirm_token}"'
                          f' and expire at "{token_expires}"')
             confirm_entity = ConfirmAccount(
