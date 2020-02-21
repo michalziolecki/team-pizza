@@ -52,15 +52,17 @@ def login_user(request: WSGIRequest):
             elif PizzaUser.objects.filter(email=username).exists():
                 log_user = PizzaUser.objects.get(email=username)
                 stored_pwd = log_user.password
-        if stored_pwd and log_user \
-                and verify_password(password=password, stored_password=stored_pwd) \
-                and log_user.is_active:
-            logger.debug('request for login user and verify password: success')
-            update_user_info_while_login(request, log_user)
-            login(request, log_user)
-            return redirect('/')
-        elif not log_user.is_active:
-            context['bad_params'] = 'Confirm Your account by email!'
+        if stored_pwd and log_user:
+            if verify_password(password=password, stored_password=stored_pwd) \
+                    and log_user.is_active:
+                logger.debug('request for login user and verify password: success')
+                update_user_info_while_login(request, log_user)
+                login(request, log_user)
+                return redirect('/')
+            elif not log_user.is_active:
+                context['bad_params'] = 'Confirm Your account by email!'
+            else:
+                context['bad_params'] = 'Wrong login or password!'
         else:
             context['bad_params'] = 'Wrong login or password!'
     else:
@@ -232,6 +234,25 @@ def confirm_mail_by_token(request: WSGIRequest, nickname, token: str):
         return render(request, 'UserApp/confirm-by-token.html', context)
     else:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)
+
+
+def send_mail_to_restore_pwd_view(request: WSGIRequest):
+    return render(request, 'UserApp/send-mail-to-restore-pwd.html')
+
+
+def send_mail_to_restore_pwd(request: WSGIRequest):
+    # post method
+    return redirect('/operation-success/')
+
+
+def restore_password_view(request: WSGIRequest, username: str, token: str):
+    # get method
+    return render(request, 'UserApp/restore-password.html')
+
+
+def restore_password(request: WSGIRequest):
+    # post method
+    return redirect('/operation-success/')
 
 
 @login_required(login_url='/login-required')
