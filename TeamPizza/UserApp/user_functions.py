@@ -11,6 +11,7 @@ from django.db import Error as DB_Error
 from django.http.request import QueryDict
 from django.utils import timezone
 from django.contrib.auth.tokens import default_token_generator
+from .models import RestorePassword
 import re
 
 from .models import PizzaUser, LoginInformation, ConfirmAccount
@@ -211,3 +212,33 @@ def get_user_from_db(username: str) -> PizzaUser:
     except BaseException as be:
         logger.error(f'Getting user from database failed ! Base exception cached info: {be.args}')
     return db_user
+
+
+def get_user_from_db_by_mail(mail: str) -> PizzaUser:
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    db_user = None
+    try:
+        db_user = PizzaUser.objects.filter(email=mail).get()
+    except DB_Error as db_err:
+        logger.error(f'Getting user from database failed ! info: {db_err.args}')
+    except BaseException as be:
+        logger.error(f'Getting user from database failed ! Base exception cached info: {be.args}')
+    return db_user
+
+
+def create_token_to_restore_pwd(restored_user: PizzaUser) -> tuple:
+    confirm_token = ''
+    status = True
+    if restored_user:
+        confirm_token = default_token_generator.make_token(restored_user)
+        try:
+            token_expires = timezone.now() + timezone.timedelta(hours=3)
+            restore_entity = RestorePassword(
+                user=restored_user,
+                token=confirm_token,
+                deadline=token_expires
+            )
+            restore_entity.save()
+        except:
+            status = False
+    return status, confirm_token

@@ -8,11 +8,12 @@ from logging import Logger
 from django.core.handlers.wsgi import WSGIRequest
 from django.utils.functional import SimpleLazyObject
 from django.http.request import QueryDict
-from .models import PizzaUser, ConfirmAccount
+from .models import PizzaUser, ConfirmAccount, RestorePassword
 from django.db import Error as DB_Error
+from django.contrib.auth.tokens import default_token_generator
 from .user_functions import is_usual_user_and_exist, insert_new_user_into_db, verify_password, \
     update_user_info_while_login, update_user_info_while_logout, get_last_user_login, \
-    hash_and_salt_password, get_user_from_db, is_root_by_role
+    hash_and_salt_password, get_user_from_db, is_root_by_role, get_user_from_db_by_mail, create_token_to_restore_pwd
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.core.mail import send_mail
@@ -227,11 +228,13 @@ def confirm_mail_by_token(request: WSGIRequest, nickname, token: str):
                 logger.error(
                     f'Activate account and remove confirm token, failed ! Base exception cached info: {be.args}')
                 context['data'] = 'Account activation failed ! \n Contact with admin or try again.'
-        elif confirm and confirm.deadline < timezone.now():
+        elif confirm and confirm.deadline <= timezone.now():
             context['data'] = 'Link has expired'
         else:
             context['data'] = 'Link not exist'
         return render(request, 'UserApp/confirm-by-token.html', context)
+    elif not token:
+        return render(request, 'TeamPizza/not-found.html', context, status=404)
     else:
         return render(request, 'TeamPizza/bad-method.html', context, status=400)
 
@@ -241,18 +244,126 @@ def send_mail_to_restore_pwd_view(request: WSGIRequest):
 
 
 def send_mail_to_restore_pwd(request: WSGIRequest):
-    # post method
-    return redirect('/operation-success/')
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    context = {}
+    try:
+        post_body: QueryDict = request.POST
+        params: dict = post_body.dict()
+        mail = params['email']
+    except KeyError as ke:
+        logger.error(f'send_mail_to_restore_pwd method failed while parsing params!'
+                     f' dict exception info: {ke.args}')
+        return render(request, 'TeamPizza/bad-method.html', status=400)
+
+    mail_regex = re.compile('^.*@teldat\.com\.pl$')  # '.*'
+    correct_mail = mail_regex.match(mail)
+
+    if request.method == 'POST' and correct_mail:
+        restored_user = get_user_from_db_by_mail(mail)
+        init_token, confirm_token = create_token_to_restore_pwd(restored_user)
+        # template, confirm_token = insert_new_user_into_db(request, logger)
+        if restored_user and init_token and confirm_token:
+            logger.info(f'User with email: {mail}, try to restore password')
+            subject = 'Restore password to pizza.teldat portal!'
+            message = f'Restore password: \n' \
+                      f'- to restore password, click on this link or copy into browser: \n' \
+                      f'https://teldat.pizza/user/restore-user-pwd/{restored_user.username}/{confirm_token}/'
+            try:
+                send_mail(subject, message, EMAIL_HOST_USER, [mail], fail_silently=False)
+                return redirect('/confirm-email/')
+            except SMTPAuthenticationError as smtp_err:
+                logger.error(f'SMTPAuthenticationError while sending email, info: user - {restored_user.username},'
+                             f' email - {mail}. What: {smtp_err.args} ')
+                context['email'] = mail
+                template = 'UserApp/sending-email-error.html'
+            except BaseException as be:
+                logger.error(f'BaseException while sending email, info: user - {restored_user.username},'
+                             f' email - {mail}. What: {be.args} ')
+                context['email'] = mail
+                template = 'UserApp/sending-email-error.html'
+        elif not init_token and restored_user:
+            template = 'UserApp/sending-email-error.html'
+            logger.error(f'Problem with creating token to restore password for user: {restored_user.username}')
+        else:
+            return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
+        return render(request, template, context)
+    elif not correct_mail:
+        return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
+    else:
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
 
 
-def restore_password_view(request: WSGIRequest, username: str, token: str):
-    # get method
-    return render(request, 'UserApp/restore-password.html')
+def restore_password_view(request: WSGIRequest, nickname: str, token: str):
+    context = {
+        'username': nickname,
+        'token': token
+    }
+    return render(request, 'UserApp/restore-password-view.html', context)
 
 
 def restore_password(request: WSGIRequest):
-    # post method
-    return redirect('/operation-success/')
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    context = {}
+    try:
+        post_body: QueryDict = request.POST
+        params: dict = post_body.dict()
+        username = params['username']
+        token = params['token']
+        password = params['password']
+        confirm_password = params['confirm_password']
+    except KeyError as ke:
+        logger.error(f'send_mail_to_restore_pwd method failed while parsing params!'
+                     f' dict exception info: {ke.args}')
+        return render(request, 'TeamPizza/bad-method.html', status=400)
+
+    if request.method == 'POST' and token and password and confirm_password:
+        template = 'UserApp/confirm-by-token.html'
+        status = 200
+        restored_user = get_user_from_db(username)
+        if restored_user:
+            restore_pwd_token = ''
+            try:
+                restore_pwd_token = RestorePassword.objects.filter(user=restored_user, token=token).get()
+            except DB_Error as db_err:
+                logger.error(f'Restore password by token, failed ! info: {db_err.args}')
+            except BaseException as be:
+                logger.error(f'Restore password by token, failed ! Base exception cached info: {be.args}')
+            if restore_pwd_token and restore_pwd_token.deadline > timezone.now():
+                if password == confirm_password:
+                    hash_pwd = hash_and_salt_password(password)
+                    try:
+                        PizzaUser.objects \
+                            .filter(id=restored_user.id,
+                                    username=restored_user.username)\
+                            .update(password=hash_pwd)
+                        restore_pwd_token.delete()
+                        return redirect('/operation-success/')
+                    except DB_Error as db_err:
+                        logger.error(f'Activate account and remove confirm token, failed ! info: {db_err.args}')
+                        context['data'] = 'Account activation failed ! \n Contact with admin or try again.'
+                    except BaseException as be:
+                        logger.error(
+                            f'Activate account and remove confirm token, failed ! Base exception cached info: {be.args}')
+                        context['data'] = 'Account activation failed ! \n Contact with admin or try again.'
+                else:
+                    template = 'UserApp/restore-password-view.html'
+                    status = 304
+                    context['bad_param'] = 'Password are not the same'
+            elif restore_pwd_token and restore_pwd_token.deadline <= timezone.now():
+                context['data'] = 'Link has expired'
+                template = 'UserApp/confirm-by-token.html'
+                status = 404
+            else:
+                template = 'TeamPizza/not-found.html'
+                status = 404
+        else:
+            template = 'TeamPizza/not-found.html'
+            status = 404
+        return render(request, template, context, status=status)
+    elif not token:
+        return render(request, 'TeamPizza/not-found.html', context, status=404)
+    else:
+        return render(request, 'TeamPizza/bad-method.html', context, status=400)
 
 
 @login_required(login_url='/login-required')
