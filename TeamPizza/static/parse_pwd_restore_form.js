@@ -8,5 +8,4 @@ const checkRestoreForm = () => {
         event.preventDefault();
         return false;
     }
-}
-
+};

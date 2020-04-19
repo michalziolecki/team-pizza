@@ -110,7 +110,7 @@ def sign_up(request: WSGIRequest) -> HttpResponse:
     if selected_role == 'R' and not is_root_by_role(user.role):
         return render(request, 'TeamPizza/not-authenticated.html', context, status=401)
 
-    mail_regex = re.compile('^.*@teldat\.com\.pl$')  # '.*'
+    mail_regex = re.compile('^.*@teldat\.com\.pl$')
     correct_mail = mail_regex.match(mail)
 
     if request.method == 'POST' and user.is_authenticated and user.role != 'U' and correct_mail:
@@ -255,7 +255,7 @@ def send_mail_to_restore_pwd(request: WSGIRequest):
                      f' dict exception info: {ke.args}')
         return render(request, 'TeamPizza/bad-method.html', status=400)
 
-    mail_regex = re.compile('^.*@teldat\.com\.pl$')  # '.*'
+    mail_regex = re.compile('^.*@teldat\.com\.pl$')  #
     correct_mail = mail_regex.match(mail)
 
     if request.method == 'POST' and correct_mail:

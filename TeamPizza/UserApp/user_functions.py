@@ -227,18 +227,30 @@ def get_user_from_db_by_mail(mail: str) -> PizzaUser:
 
 
 def create_token_to_restore_pwd(restored_user: PizzaUser) -> tuple:
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     confirm_token = ''
     status = True
     if restored_user:
+        logger.debug('user exist')
         confirm_token = default_token_generator.make_token(restored_user)
+        logger.debug('token created')
         try:
             token_expires = timezone.now() + timezone.timedelta(hours=3)
+            logger.debug(f'token expires at {token_expires}')
+            if RestorePassword.objects.filter(user=restored_user,
+                                              token=confirm_token).exists():
+                logger.debug(f'token exist')
+                RestorePassword.objects.filter(user=restored_user,
+                                               token=confirm_token).delete()
+                logger.debug(f'token deleted')
             restore_entity = RestorePassword(
                 user=restored_user,
                 token=confirm_token,
                 deadline=token_expires
             )
             restore_entity.save()
-        except:
+            logger.debug(f'token saved')
+        except BaseException as be:
+            logger.debug(f'exception cached: {be.args}')
             status = False
     return status, confirm_token
