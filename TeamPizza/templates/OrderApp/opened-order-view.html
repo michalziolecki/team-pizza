@@ -18,7 +18,7 @@
                         <h2 class="order-header">Order - Open</h2>
                     {% else %}
                         <h2 class="order-header">Order - Closed</h2>
-                    {% endif  %}
+                    {% endif %}
                     <table id="order-table-id" class="order-table">
                         <tr>
                             <th>Owner:</th>
@@ -56,6 +56,10 @@
                             <th>All pieces:</th>
                             <th>{{ all_pieces }}</th>
                         </tr>
+                        <tr>
+                            <th>Other meals:</th>
+                            <th>{{ other_meal }}</th>
+                        </tr>
                         {% if user.id == order.order_owner.id %}
                             <tr>
                                 <th>Update:</th>
@@ -69,22 +73,24 @@
                                     <a style="color: red">{{ bad_param }}</a>
                                 </th>
                             </tr>
-                            <tr>
-                                <th>Close:</th>
-                                <th>
-                                    <div class="order-option-preview">
-                                        <form method="post" action="/order/close/">
-                                            {% csrf_token %}
-                                            <input hidden name="hash_id" type="text"
-                                                   value="{{ order.hash_id }}">
-                                            <button class="order-table-button">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                    <a style="color: red">{{ bad_param }}</a>
-                                </th>
-                            </tr>
+                            {% if order.is_open %}
+                                <tr>
+                                    <th>Close:</th>
+                                    <th>
+                                        <div class="order-option-preview">
+                                            <form method="post" action="/order/close/">
+                                                {% csrf_token %}
+                                                <input hidden name="hash_id" type="text"
+                                                       value="{{ order.hash_id }}">
+                                                <button class="order-table-button">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <a style="color: red">{{ bad_param }}</a>
+                                    </th>
+                                </tr>
+                            {% endif %}
                             <tr>
                                 <th>Delete:</th>
                                 <th>
@@ -113,8 +119,8 @@
                                 <th>{{ contribution.contribution_owner.first_name }} {{ contribution.contribution_owner.last_name }}</th>
                             </tr>
                             <tr>
-                                <th>Pieces:</th>
-                                <th>{{ contribution.pieces_number }}</th>
+                                <th>How many:</th>
+                                <th>{{ contribution.number }}</th>
                             </tr>
                             {% if contribution.description %}
                                 <tr>
@@ -123,11 +129,13 @@
                                 </tr>
                             {% endif %}
                             <tr>
-                                <th>Size</th>
-                                {% if contribution.size == 'B' %}
+                                <th>Type</th>
+                                {% if contribution.ord_type == 'B' %}
                                     <th>Big</th>
-                                {% else %}
+                                {% elif contribution.ord_type == 'S' %}
                                     <th>Small</th>
+                                {% else %}
+                                    <th>Other meal</th>
                                 {% endif %}
                             </tr>
                             <tr>

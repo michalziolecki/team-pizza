@@ -42,4 +42,4 @@ class LoginInformation(models.Model):
 
 class LastOrder(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    pieces_number = models.IntegerField(default=0)
+    number = models.IntegerField(default=0)

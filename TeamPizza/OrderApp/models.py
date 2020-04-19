@@ -16,14 +16,16 @@ class Order(models.Model):
 class ContributionOrder(models.Model):
     SMALL = 'S'
     BIG = 'B'
+    OTHER = 'O'
     ROLES = [
         (SMALL, 'small'),
-        (BIG, 'big')
+        (BIG, 'big'),
+        (OTHER, 'other')
     ]
     contribution_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    pieces_number = models.IntegerField(null=False)
-    size = models.CharField(max_length=1, choices=ROLES, default=BIG)
+    number = models.IntegerField(null=False)
+    ord_type = models.CharField(max_length=1, choices=ROLES, default=BIG)
     add_contr_time = models.DateTimeField(null=False)
     was_updated = models.BooleanField(default=False)
     description = models.CharField(max_length=200)

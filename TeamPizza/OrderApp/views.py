@@ -60,16 +60,20 @@ def opened_order_view(request: WSGIRequest, hash_id: str):
                 contributions = ContributionOrder.objects.filter(order=order).order_by('add_contr_time')
                 small_pieces = 0
                 big_pieces = 0
+                other_meal = 0
                 logger.debug(f'contributions size: {len(contributions)}')
-                for piece in [contribute for contribute in contributions if contribute.size == 'B']:
-                    big_pieces += piece.pieces_number
-                for piece in [contribute for contribute in contributions if contribute.size == 'S']:
-                    small_pieces += piece.pieces_number
+                for piece in [contribute for contribute in contributions if contribute.ord_type == 'B']:
+                    big_pieces += piece.number
+                for piece in [contribute for contribute in contributions if contribute.ord_type == 'S']:
+                    small_pieces += piece.number
+                for other in [contribute for contribute in contributions if contribute.ord_type == 'O']:
+                    other_meal += other.number
                 context['contributions'] = contributions
                 context['order'] = order
                 context['small_pieces'] = small_pieces
                 context['big_pieces'] = big_pieces
                 context['all_pieces'] = small_pieces + big_pieces
+                context['other_meal'] = other_meal
             except DB_Error as db_err:
                 logger.error(f'Getting order "{hash_id}" from database failed ! info: {db_err.args}')
                 context['bad_param'] = 'Problem with database try again'
@@ -396,14 +400,14 @@ def update_contribution_post(request: WSGIRequest, hash_id: str, contribution_id
     user = request.user
     context = {'user': user}
     pieces = ''
-    size = ''
+    ord_type = ''
     description = ''
 
     try:
         post_body: QueryDict = request.POST
         params: dict = post_body.dict()
         pieces = params['pieces']
-        size = params['size']
+        ord_type = params['ord_type']
         description = params['description']
     except KeyError as ke:
         logger.error(f'Key error while user try update contribution order, probably someone change form!'
@@ -421,10 +425,10 @@ def update_contribution_post(request: WSGIRequest, hash_id: str, contribution_id
                     except ValueError as ve:
                         logger.error(f'Value error while user try join to order, number of pieces was not integer!'
                                      f'  info: {ve.args}')
-                if pieces_int > 0 and size:
+                if pieces_int > 0 and ord_type:
                     ContributionOrder.objects.filter(id=contribution_id, order=order).update(
-                        pieces_number=pieces_int,
-                        size=size,
+                        number=pieces_int,
+                        ord_type=ord_type,
                         add_contr_time=datetime.now(),
                         was_updated=True,
                         description=description
@@ -468,14 +472,14 @@ def join_order(request: WSGIRequest, hash_id: str):
     context = {'user': user, 'hash_id': hash_id}
     if request.method == 'POST' and user.is_authenticated:
         pieces = ''
-        size = ''
+        ord_type = ''
         description = ''
 
         try:
             post_body: QueryDict = request.POST
             params: dict = post_body.dict()
             pieces = params['pieces']
-            size = params['size']
+            ord_type = params['ord_type']
             description = params['description']
         except KeyError as ke:
             logger.error(f'Key error while user try join to order, probably someone change form!'
@@ -496,20 +500,22 @@ def join_order(request: WSGIRequest, hash_id: str):
 
         if user_already_joined(hash_id, db_user):
             context['bad_param'] = 'You have already joined'
-        elif pieces_int > 0 and size and db_user:
+        elif pieces_int > 0 and ord_type and db_user:
             try:
                 order = Order.objects.filter(hash_id=hash_id).get()
                 contribution = ContributionOrder(
                     contribution_owner=db_user,
                     order=order,
-                    pieces_number=int(pieces),
-                    size=size,
+                    number=int(pieces),
+                    ord_type=ord_type,
                     add_contr_time=datetime.now(),
                     was_updated=False,
                     description=description
                 )
                 if order.is_open:
+                    logger.debug(f'contribution order type before save {contribution.ord_type}')
                     contribution.save()
+                    logger.debug(f'contribution order type after save {contribution.ord_type}')
                     logger.debug(f'User: {db_user.username} join to order "{hash_id}"! ')
                     return redirect(f'/order/preview-order/{hash_id}/')
                 else:

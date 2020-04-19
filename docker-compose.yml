@@ -47,4 +47,5 @@ services:
       - db-postgres
     links:
       - db-postgres:db-postgres
-    command: bash -c "python3 /TeamPizza/manage.py  makemigrations --noinput && python3 /TeamPizza/manage.py makemigrations UserApp && python3 /TeamPizza/manage.py makemigrations OrderApp && python3 /TeamPizza/manage.py  migrate --noinput && gunicorn TeamPizza.wsgi --keyfile /ssl/key/dummy-key.pem --certfile /ssl/cert/dummy-certificate.crt -b 0.0.0.0:8000"
+    command: bash -c "python3 /TeamPizza/manage.py makemigrations < <(yes y) && python3 /TeamPizza/manage.py makemigrations UserApp < <(yes y) && python3 /TeamPizza/manage.py makemigrations OrderApp < <(yes y) && python3 /TeamPizza/manage.py  migrate && gunicorn TeamPizza.wsgi --keyfile /ssl/key/dummy-key.pem --certfile /ssl/cert/dummy-certificate.crt -b 0.0.0.0:8000"
+# streams with answer to commands '< <(yes y)' is helpfull in updating database

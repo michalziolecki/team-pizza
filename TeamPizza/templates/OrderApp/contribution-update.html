@@ -20,9 +20,9 @@
                         {% csrf_token %}
                         <div class="input-group">
                             <i class="fas fa-pizza-slice"></i>
-                            {% if contribution and contribution.pieces_number %}
+                            {% if contribution and contribution.number %}
                                 <input id="order-elements-id" name="pieces" min="1" step="1"
-                                       type="number" pattern="[0-9]{1,2}" value="{{ contribution.pieces_number }}"
+                                       type="number" pattern="[0-9]{1,2}" value="{{ contribution.number }}"
                                        style="font-size: 1.2rem" required>
                             {% else %}
                                 <input id="order-elements-id" name="pieces" min="1" step="1"
@@ -32,13 +32,19 @@
                         </div>
                         <div class="input-group">
                             <i class="fas fa-check-square"></i>
-                            <select class="select-role" name="size" style="font-size: 1.2rem">
-                                {% if contribution.size == "B" %}
+                            <select class="select-role" name="ord_type" style="font-size: 1.2rem">
+                                {% if contribution.ord_type == "B" %}
                                     <option selected value="B">Big</option>
                                     <option value="S">Small</option>
-                                {% else %}
+                                    <option value="O">Other meal</option>
+                                {% elif contribution.ord_type == "S" %}
                                     <option value="B">Big</option>
                                     <option selected value="S">Small</option>
+                                    <option value="O">Other meal</option>
+                                {% else %}
+                                    <option value="B">Big</option>
+                                    <option value="S">Small</option>
+                                    <option selected value="O">Other meal</option>
                                 {% endif %}
                             </select>
                             <span class="bar"></span>
