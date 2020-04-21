@@ -115,8 +115,8 @@ def create_order(request: WSGIRequest):
                          f'  info: {ke.args}')
 
         db_user: PizzaUser = get_user_from_db(user.username)
-        parsed_datetime = datetime.strptime(predicted_datetime, "%Y-%m-%dT%H:%M")
-        actual_time = datetime.now()
+        parsed_datetime = timezone.make_aware(datetime.strptime(predicted_datetime, "%Y-%m-%dT%H:%M"))
+        actual_time = timezone.now()
 
         if description == 'Your order description...':
             description = ''
@@ -212,8 +212,8 @@ def update_order_post(request: WSGIRequest, hash_id: str):
     # if description == 'Your order description...':
     #     description = ''
     db_user: PizzaUser = get_user_from_db(user.username)
-    parsed_datetime = datetime.strptime(predicted_datetime, "%Y-%m-%dT%H:%M")
-    actual_time = datetime.now()
+    parsed_datetime = timezone.make_aware(datetime.strptime(predicted_datetime, "%Y-%m-%dT%H:%M"))
+    actual_time = timezone.now()
 
     if actual_time < parsed_datetime and db_user:
         try:
