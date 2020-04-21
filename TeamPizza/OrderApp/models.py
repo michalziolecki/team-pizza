@@ -6,7 +6,7 @@ from hashid_field import HashidField
 class Order(models.Model):
     hash_id = models.CharField(max_length=40, null=False, unique=True)
     order_owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    prediction_order_time = models.CharField(max_length=200)
+    prediction_order_time = models.DateTimeField(null=False)
     description = models.CharField(max_length=200, null=True)
     is_open = models.BooleanField(default=True, null=False)
     open_time = models.DateTimeField(null=False)

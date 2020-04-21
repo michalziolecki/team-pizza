@@ -11,13 +11,14 @@ import hashlib
 import logging
 from logging import Logger
 from datetime import datetime
+from django.utils import timezone
 from hashids import Hashids
 
 from UserApp.models import PizzaUser
 from UserApp.user_functions import get_user_from_db
 from .models import Order, ContributionOrder
 from OrderApp import HASH_IDS_LENGTH
-from .order_functions import user_already_joined
+from .order_functions import user_already_joined, close_after_deadline
 
 
 @login_required(login_url='/login-required')
@@ -51,12 +52,18 @@ def opened_order_view(request: WSGIRequest, hash_id: str):
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     user = request.user
     context = {'user': user}
+
     if request.method == 'GET' and user.is_authenticated:
         logger.debug('Get method opened_order_view')
         db_user = get_user_from_db(user.username)
         if db_user:
             try:
                 order = Order.objects.filter(hash_id=hash_id).get()
+                actual_time = timezone.now()
+                if order.prediction_order_time < actual_time:
+                    closed_order = close_after_deadline(hash_id=hash_id)
+                    if closed_order:
+                        order = closed_order
                 contributions = ContributionOrder.objects.filter(order=order).order_by('add_contr_time')
                 small_pieces = 0
                 big_pieces = 0
@@ -147,6 +154,7 @@ def create_order(request: WSGIRequest):
 @login_required(login_url='/login-required')
 def update_order(request: WSGIRequest, hash_id: str):
     user = request.user
+    close_after_deadline(hash_id=hash_id)
     if request.method == "POST" and user.is_authenticated:
         return update_order_post(request, hash_id)
     elif request.method == "GET" and user.is_authenticated:
@@ -248,7 +256,7 @@ def close_order(request: WSGIRequest):
                 if order and order.order_owner.id == user.id:
                     Order.objects.filter(hash_id=hash_id).update(
                         is_open=False,
-                        close_time=datetime.now()
+                        close_time=timezone.now()
                     )
                     return redirect(f'/order/preview-order/{hash_id}')
             except DB_Error as db_err:
@@ -325,14 +333,18 @@ def delete_contribution(request: WSGIRequest):
         if hash_id and contribution_id:
             try:
                 order = Order.objects.filter(hash_id=hash_id).get()
+                actual_time = timezone.now()
+                if order.prediction_order_time < actual_time:
+                    order = close_after_deadline(hash_id=hash_id)
                 contribution = ContributionOrder.objects \
                     .filter(id=contribution_id, order=order).get()
                 logger.debug(f'User id is: {user.id} !')
-                if contribution and contribution.contribution_owner.id == user.id and order.is_open:
+                if contribution and contribution.contribution_owner.id == user.id \
+                        and order is not None and order.is_open:
                     ContributionOrder.objects.filter(id=contribution_id, order=order).delete()
                     logger.info(f'Delete order contribution by user {user.username} success !')
                     return redirect('/operation-success/')
-                elif not order.is_open:
+                elif order is None or not order.is_open:
                     context['bad_param'] = f'Order has been closed at {order.close_time}'
                     return render(request, 'TeamPizza/not-authenticated.html', context)
             except DB_Error as db_err:
@@ -353,6 +365,7 @@ def delete_contribution(request: WSGIRequest):
 @login_required(login_url='/login-required')
 def update_contribution(request: WSGIRequest, hash_id: str, contribution_id: str):
     user = request.user
+    close_after_deadline(hash_id=hash_id)
     if request.method == "POST" and user.is_authenticated:
         return update_contribution_post(request, hash_id, contribution_id)
     elif request.method == "GET" and user.is_authenticated:
@@ -429,7 +442,7 @@ def update_contribution_post(request: WSGIRequest, hash_id: str, contribution_id
                     ContributionOrder.objects.filter(id=contribution_id, order=order).update(
                         number=pieces_int,
                         ord_type=ord_type,
-                        add_contr_time=datetime.now(),
+                        add_contr_time=timezone.now(),
                         was_updated=True,
                         description=description
                     )
@@ -503,16 +516,19 @@ def join_order(request: WSGIRequest, hash_id: str):
         elif pieces_int > 0 and ord_type and db_user:
             try:
                 order = Order.objects.filter(hash_id=hash_id).get()
+                actual_time = timezone.now()
+                if order.prediction_order_time < actual_time:
+                    order = close_after_deadline(hash_id=hash_id)
                 contribution = ContributionOrder(
                     contribution_owner=db_user,
                     order=order,
                     number=int(pieces),
                     ord_type=ord_type,
-                    add_contr_time=datetime.now(),
+                    add_contr_time=timezone.now(),
                     was_updated=False,
                     description=description
                 )
-                if order.is_open:
+                if order is not None and order.is_open:
                     logger.debug(f'contribution order type before save {contribution.ord_type}')
                     contribution.save()
                     logger.debug(f'contribution order type after save {contribution.ord_type}')
