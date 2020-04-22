@@ -18,7 +18,7 @@ from UserApp.models import PizzaUser
 from UserApp.user_functions import get_user_from_db
 from .models import Order, ContributionOrder
 from OrderApp import HASH_IDS_LENGTH
-from .order_functions import user_already_joined, close_after_deadline
+from .order_functions import user_max_joined, close_after_deadline
 
 
 @login_required(login_url='/login-required')
@@ -515,8 +515,8 @@ def join_order(request: WSGIRequest, hash_id: str):
                 logger.error(f'Value error while user try join to order, number of pieces was not integer!'
                              f'  info: {ve.args}')
 
-        if user_already_joined(hash_id, db_user):
-            context['bad_param'] = 'You have already joined'
+        if user_max_joined(hash_id, db_user):
+            context['bad_param'] = 'You have already joined to many times (10 max)'
         elif pieces_int > 0 and ord_type and db_user:
             try:
                 order = Order.objects.filter(hash_id=hash_id).get()

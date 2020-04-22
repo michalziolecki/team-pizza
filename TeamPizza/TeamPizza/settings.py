@@ -37,6 +37,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = ''  # add gmail account
 EMAIL_HOST_PASSWORD = ''  # add password
 EMAIL_PORT = 587
+MAX_CONTRIBUTES = 10
 #####
 
 # logging
