@@ -41,6 +41,8 @@ EMAIL_PORT = 587
 
 # logging
 LOGGER_NAME = 'TeamPizzaLog'
+U_LOGFILE_SIZE = 1 * 1024 * 1024
+U_LOGFILE_COUNT = 2
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -57,8 +59,10 @@ LOGGING = {
     'handlers': {
         'file': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs', 'develop_logs.log'),
+            'maxBytes': U_LOGFILE_SIZE,
+            'backupCount': U_LOGFILE_COUNT,
             'formatter': 'verbose'
         },
         'console': {
