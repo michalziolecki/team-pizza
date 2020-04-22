@@ -1,0 +1,91 @@
+{% extends "../TeamPizza/index.html" %}
+
+{% block title %} Users - Team Pizza {% endblock %}
+
+{% block content %}
+    <div id="order-wrapper">
+        <div class="form-order-container">
+            <a id="form-exit" href="/">
+                <div class="cross">
+                    <div id="line-1" class="cross-line"></div>
+                    <div id="line-2" class="cross-line"></div>
+                </div>
+            </a>
+            <span class="form-heading">Users and privileges</span>
+            <div class="tab-window">
+                <div id="users-table">
+                    <a>{{ bad_param }}</a>
+                    <br>
+                    <table id="table-with-users" style="width:90%; text-align: center;">
+                        <tr>
+                            <th>Nickname</th>
+                            <th>Name</th>
+                            <th>Last Name</th>
+                            <th>Privileges</th>
+                        </tr>
+
+                        {% for l_user in users_list %}
+                            <tr>
+                                <td>{{ l_user.username }}</td>
+                                <td>{{ l_user.first_name }}</td>
+                                <td>{{ l_user.last_name }}</td>
+                                {% if user.role == 'A' or user.role == 'R' %}
+                                    <td>
+                                        {% if l_user.role == 'R' %}
+                                            Root
+                                        {% else %}
+                                            <form action="/user/change-privileges/" method="POST">
+                                            {% csrf_token %}
+                                                <input hidden name="id" type="text" value="{{ l_user.id }}" required>
+                                                <input hidden name="nickname" type="text" value="{{ l_user.username }}" required>
+                                                <select class="select-role" name="role"
+                                                        onchange="this.form.submit()">
+                                                    {% if l_user.role == 'A' %}
+                                                        <option value="A" selected>Admin</option>
+                                                        <option value="M">Moderator</option>
+                                                        <option value="U">User</option>
+                                                        {% if user.role == 'R' %}
+                                                            <option value="R">Root</option>
+                                                        {% endif %}
+                                                    {% elif l_user.role == 'M' %}
+                                                        <option value="A">Admin</option>
+                                                        <option value="M" selected>Moderator</option>
+                                                        <option value="U">User</option>
+                                                        {% if user.role == 'R' %}
+                                                            <option value="R">Root</option>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <option value="A">Admin</option>
+                                                        <option value="M">Moderator</option>
+                                                        <option value="U" selected>User</option>
+                                                        {% if user.role == 'R' %}
+                                                            <option value="R">Root</option>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </select>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                {% else %}
+                                    {% if l_user.role == 'A' %}
+                                        <td>Admin</td>
+                                    {% elif l_user.role == 'M' %}
+                                        <td>Moderator</td>
+                                    {% elif l_user.role == 'R' %}
+                                        <td>Root</td>
+                                    {% else %}
+                                        <td>User</td>
+                                    {% endif %}
+                                {% endif %}
+
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    {% if bad_param %}
+                        <a style="color: black">{{ bad_param }}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

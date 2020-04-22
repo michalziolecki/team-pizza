@@ -11,10 +11,14 @@
                     <div id="line-2" class="cross-line"></div>
                 </div>
             </a>
-            <span class="form-heading">Order information's</span>
+            <span class="form-heading">Order information</span>
             <div class="tab-window">
                 <div id="opened-order-id">
-                    <h2 class="order-header">Created Order</h2>
+                    {% if order.is_open %}
+                        <h2 class="order-header">Order - Open</h2>
+                    {% else %}
+                        <h2 class="order-header">Order - Closed</h2>
+                    {% endif %}
                     <table id="order-table-id" class="order-table">
                         <tr>
                             <th>Owner:</th>
@@ -31,14 +35,10 @@
                             </tr>
                         {% endif %}
                         <tr>
-                            <th>is open?</th>
-                            <th>{{ order.is_open }}</th>
-                        </tr>
-                        <tr>
                             <th>Open time:</th>
                             <th>{{ order.open_time }}</th>
                         </tr>
-                        {% if order.is_open is False %}
+                        {% if not order.is_open and order.close_time %}
                             <tr>
                                 <th>Close Time:</th>
                                 <th>{{ order.close_time }}</th>
@@ -56,23 +56,55 @@
                             <th>All pieces:</th>
                             <th>{{ all_pieces }}</th>
                         </tr>
+                        <tr>
+                            <th>Other meals:</th>
+                            <th>{{ other_meal }}</th>
+                        </tr>
                         {% if user.id == order.order_owner.id %}
                             <tr>
                                 <th>Update:</th>
                                 <th>
-                                    <button>Update</button>
+                                    <div class="order-option-preview">
+                                        <button onclick="location.href='/order/update/{{ order.hash_id }}'"
+                                                class="order-table-button">
+                                            <i class="fab fa-telegram-plane"></i>
+                                        </button>
+                                    </div>
+                                    <a style="color: red">{{ bad_param }}</a>
                                 </th>
                             </tr>
-                            <tr>
-                                <th>Close:</th>
-                                <th>
-                                    <button>Close</button>
-                                </th>
-                            </tr>
+                            {% if order.is_open %}
+                                <tr>
+                                    <th>Close:</th>
+                                    <th>
+                                        <div class="order-option-preview">
+                                            <form method="post" action="/order/close/">
+                                                {% csrf_token %}
+                                                <input hidden name="hash_id" type="text"
+                                                       value="{{ order.hash_id }}">
+                                                <button class="order-table-button">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <a style="color: red">{{ bad_param }}</a>
+                                    </th>
+                                </tr>
+                            {% endif %}
                             <tr>
                                 <th>Delete:</th>
                                 <th>
-                                    <button>Delete</button>
+                                    <div class="order-option-preview">
+                                        <form method="post" action="/order/delete/">
+                                            {% csrf_token %}
+                                            <input hidden name="hash_id" type="text"
+                                                   value="{{ order.hash_id }}">
+                                            <button class="order-table-button">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <a style="color: red">{{ bad_param }}</a>
                                 </th>
                             </tr>
                         {% endif %}
@@ -87,8 +119,8 @@
                                 <th>{{ contribution.contribution_owner.first_name }} {{ contribution.contribution_owner.last_name }}</th>
                             </tr>
                             <tr>
-                                <th>Pieces:</th>
-                                <th>{{ contribution.pieces_number }}</th>
+                                <th>How many:</th>
+                                <th>{{ contribution.number }}</th>
                             </tr>
                             {% if contribution.description %}
                                 <tr>
@@ -97,11 +129,13 @@
                                 </tr>
                             {% endif %}
                             <tr>
-                                <th>Size</th>
-                                {% if contribution.size == 'B' %}
+                                <th>Type</th>
+                                {% if contribution.ord_type == 'B' %}
                                     <th>Big</th>
-                                {% else %}
+                                {% elif contribution.ord_type == 'S' %}
                                     <th>Small</th>
+                                {% else %}
+                                    <th>Other meal</th>
                                 {% endif %}
                             </tr>
                             <tr>
@@ -112,11 +146,36 @@
                                 <th>Was updated?</th>
                                 <th>{{ contribution.was_updated }}</th>
                             </tr>
-                            {% if user.id == order.order_owner.id %}
+                            {% if user.id == contribution.contribution_owner.id %}
                                 <tr>
                                     <th>Update:</th>
                                     <th>
-                                        <button>Update</button>
+                                        <div class="order-option-preview">
+                                            <button onclick="location.href='/order/update-contribution/{{ contribution.order.hash_id }}/{{ contribution.id }}'"
+                                                    class="order-table-button">
+                                                <i class="fab fa-telegram-plane"></i>
+                                            </button>
+                                        </div>
+                                        <a style="color: red">{{ bad_param }}</a>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Delete:</th>
+                                    <th>
+                                        <div class="order-option-preview">
+                                            <form method="post" action="/order/delete-contribution/">
+                                                {% csrf_token %}
+                                                <input hidden name="hash_id" type="text"
+                                                       value="{{ contribution.order.hash_id }}">
+                                                <input hidden name="contribution_id" type="text"
+                                                       value="{{ contribution.id }}">
+                                                <button
+                                                        class="order-table-button">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <a style="color: red">{{ bad_param }}</a>
                                     </th>
                                 </tr>
                             {% endif %}

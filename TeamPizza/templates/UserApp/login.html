@@ -28,9 +28,12 @@
                     {% if bad_params %}
                         <p style="color: black">{{ bad_params }}</p>
                     {% endif %}
-                    <button id="loginButton">
+                    <button onclick="checkLoginForm();" id="loginButton">
                         <i class="fab fa-telegram-plane"></i>
                     </button>
+                </div>
+                <div style="color: black; text-align: center" >
+                    <a href="/user/mail-restore-pwd/" style="color: black">Forgot password?</a>
                 </div>
             </form>
         </div>

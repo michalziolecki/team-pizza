@@ -43,29 +43,49 @@ const changeDivToRemove = () => {
 
 };
 
-const createBackgroundOrderTabColor = (createColorTab, ordersColorTab) => {
+const createBackgroundOrderTabColor = (createColorTab, ordersColorTab, closeColorTab) => {
     var createOrderTab = document.getElementById('create-order-tab');
     var chooseOrderTab = document.getElementById('join-to-order-tab');
+    var closedOrderTab = document.getElementById('close-order-tab');
     createOrderTab.style.backgroundColor = createColorTab;
     chooseOrderTab.style.backgroundColor = ordersColorTab;
+    closedOrderTab.style.backgroundColor = closeColorTab;
+};
+
+const changeDivToClosedOrder  = () => {
+    var createOrderTab = document.getElementById('create-order-form');
+    var chooseOrderTab = document.getElementById('choose-order-table');
+    var closedOrderTab = document.getElementById('close-order-table');
+
+    createOrderTab.style.display = "none";
+    chooseOrderTab.style.display = "none";
+    closedOrderTab.style.display = "block";
+
+    createBackgroundOrderTabColor('', '', '#ccc');
 };
 
 const changeDivToCreateOrder = () => {
     var createOrderTab = document.getElementById('create-order-form');
     var chooseOrderTab = document.getElementById('choose-order-table');
+    var closedOrderTab = document.getElementById('close-order-table');
+
     createOrderTab.style.display = "block";
     chooseOrderTab.style.display = "none";
+    closedOrderTab.style.display = "none";
 
-    createBackgroundOrderTabColor('#ccc', '');
+    createBackgroundOrderTabColor('#ccc', '', '');
 
 };
 
 const changeDivToOpenedOrders = () => {
     var createOrderTab = document.getElementById('create-order-form');
     var chooseOrderTab = document.getElementById('choose-order-table');
+    var closedOrderTab = document.getElementById('close-order-table');
+
     createOrderTab.style.display = "none";
     chooseOrderTab.style.display = "block";
+    closedOrderTab.style.display = "none";
 
-    createBackgroundOrderTabColor('', '#ccc');
+    createBackgroundOrderTabColor('', '#ccc', '');
 
 };

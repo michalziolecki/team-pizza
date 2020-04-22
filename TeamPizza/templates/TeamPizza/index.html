@@ -21,13 +21,20 @@
         <li>
             <a href="/about">About</a>
         </li>
+        {% if not user.is_authenticated %}
+            <li>
+                <a href="/user/self-sign-up-form/">Sign up</a>
+            </li>
+        {% endif %}
         {% if user.is_authenticated %}
             <li>
-                <a href="/users/">Users</a>
+                <a href="/user/users/">Users</a>
             </li>
-            <li>
-                <a href="/user/sign-up-form">Register</a>
-            </li>
+            {% if user.role != 'U' %}
+                <li>
+                    <a href="/user/sign-up-form">Register</a>
+                </li>
+            {% endif %}
             <li>
                 <a href="/order/options/">Order</a>
             </li>

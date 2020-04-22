@@ -27,12 +27,23 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = ['*']
 
+#### settings to sending email ####
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = ''  # add gmail account
+EMAIL_HOST_PASSWORD = ''  # add password
+EMAIL_PORT = 587
+MAX_CONTRIBUTES = 10
+#####
 
 # logging
 LOGGER_NAME = 'TeamPizzaLog'
+U_LOGFILE_SIZE = 1 * 1024 * 1024
+U_LOGFILE_COUNT = 2
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -49,8 +60,10 @@ LOGGING = {
     'handlers': {
         'file': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs', 'develop_logs.log'),
+            'maxBytes': U_LOGFILE_SIZE,
+            'backupCount': U_LOGFILE_COUNT,
             'formatter': 'verbose'
         },
         'console': {
@@ -152,7 +165,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Warsaw'
 
 USE_I18N = True
 

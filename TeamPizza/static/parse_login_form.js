@@ -1,6 +1,4 @@
 const checkLoginForm = () => {
-    const loginButton = document.getElementById('loginButton');
-    loginButton.addEventListener('click', () => {
         const errorValue = 'Please correct the errors in the form! \n ' +
             '- login - min. 5 characters a-zA-Z0-9 \n ' + '- password - min. 9 characters \n ';
         const loginNickname = document.getElementById('loginNickname').value;
@@ -12,7 +10,4 @@ const checkLoginForm = () => {
             event.preventDefault();
             return false;
         }
-    });
 }
-
-// checkLoginForm();

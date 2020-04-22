@@ -13,7 +13,12 @@
                 </div>
             </a>
             <span class="form-heading">Sign up</span>
-            <form class="register-form" action="/user/sign-up/" method="post" enctype='application/json'>
+            {% if user.is_authenticated %}
+                <form class="register-form" action="/user/sign-up/" method="post" enctype='application/json'>
+            {% else %}
+                <form class="register-form" action="/user/self-sign-up/" method="post" enctype='application/json'>
+            {% endif %}
+            <!--<form class="register-form" action="/user/sign-up/" method="post" enctype='application/json'>-->
                 {% csrf_token %}
                 <div class="input-group">
                     <i class="fas fa-user"></i>
@@ -48,11 +53,20 @@
                 </div>
                 <div class="input-group">
                     <i class="fas fa-check-square"></i>
-                    <select class="select-role" name="role">
-                        <option value="A">Admin</option>
-                        <option value="M">Moderator</option>
-                        <option value="U">User</option>
-                    </select>
+                    {% if user.is_authenticated %}
+                        <select class="select-role" name="role">
+                            <option value="A">Admin</option>
+                            <option value="M">Moderator</option>
+                            <option value="U" selected>User</option>
+                            {% if user.role == 'R' %}
+                                <option value="R">Root</option>
+                            {% endif %}
+                        </select>
+                    {% else %}
+                        <select class="select-role" name="role">
+                            <option value="U" selected>User</option>
+                        </select>
+                    {% endif %}
                     <span class="bar"></span>
                 </div>
                 <div class="input-group">
@@ -60,9 +74,6 @@
                         <i class="fab fa-telegram-plane"></i>
                     </button>
                 </div>
-                <!-- <div class="switch-login"> -->
-                <!-- <a href="/user/log-form/">Already have an account? <span>Login</span></a> -->
-                <!-- </div> -->
             </form>
         </div>
     </div>

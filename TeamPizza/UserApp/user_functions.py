@@ -10,9 +10,11 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.db import Error as DB_Error
 from django.http.request import QueryDict
 from django.utils import timezone
+from django.contrib.auth.tokens import default_token_generator
+from .models import RestorePassword
 import re
 
-from .models import PizzaUser, LoginInformation
+from .models import PizzaUser, LoginInformation, ConfirmAccount
 
 
 def is_usual_user_and_exist(login: str) -> tuple:
@@ -39,6 +41,13 @@ def is_superuser_by_role(role: str) -> bool:
     if role != 'U':
         is_super_user = True
     return is_super_user
+
+
+def is_root_by_role(role: str) -> bool:
+    is_root = False
+    if role == 'R':
+        is_root = True
+    return is_root
 
 
 def check_user_role(login: str) -> str:
@@ -90,19 +99,20 @@ def verify_password(password: str, stored_password: str) -> bool:
     return ''.join([final_pwd_hash, base64_salt]) == stored_password
 
 
-def insert_new_user_into_db(request: WSGIRequest, logger: Logger) -> str:
+def insert_new_user_into_db(request: WSGIRequest, logger: Logger) -> tuple:
     user = request.user
     post_body: QueryDict = request.POST
     params: dict = post_body.dict()
     template = 'UserApp/sign-up-success.html'
     pwd_regex = re.compile('.{9,}')
-
+    confirm_token = ''
     try:
         if params['password'] != params['confirm_password'] or not pwd_regex.match(params['password']):
             template = 'UserApp/password-not-confirmed.html'
         else:
             password_hash = hash_and_salt_password(params['password'])
             new_user = PizzaUser(
+                is_active=False,
                 username=params['nickname'],
                 first_name=params['name'],
                 last_name=params['surname'],
@@ -112,6 +122,17 @@ def insert_new_user_into_db(request: WSGIRequest, logger: Logger) -> str:
                 is_superuser=is_superuser_by_role(params['role'])
             )
             new_user.save()
+            logger.debug(f'New user is {new_user.username}')
+            confirm_token = default_token_generator.make_token(new_user)
+            token_expires = timezone.now() + timezone.timedelta(hours=24)
+            logger.debug(f'Generated token for user {new_user.username} is "{confirm_token}"'
+                         f' and expire at "{token_expires}"')
+            confirm_entity = ConfirmAccount(
+                user=new_user,
+                token=confirm_token,
+                deadline=token_expires
+            )
+            confirm_entity.save()
     except KeyError as ke:
         logger.error(f'Sign up method failed while parsing params! info -> params: {params},'
                      f' user: {user.username}, dict exception info: {ke.args}')
@@ -125,13 +146,13 @@ def insert_new_user_into_db(request: WSGIRequest, logger: Logger) -> str:
                      f' user: {user.username}, base exception info: {be.args}')
         template = 'TeamPizza/method-error.html'
 
-    return template
+    return template, confirm_token
 
 
 def update_user_info_while_login(request: WSGIRequest, user: PizzaUser):
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     try:
-        PizzaUser.objects.filter(username=user.username).update(is_active=True,
+        PizzaUser.objects.filter(username=user.username).update(is_logged=True,
                                                                 last_login=timezone.now())
         logger.info('Update user object success while login!')
         last_log_ip = get_client_ip(request, user)
@@ -165,7 +186,7 @@ def get_client_ip(request: WSGIRequest, user: PizzaUser):
 def update_user_info_while_logout(user: PizzaUser):
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     try:
-        PizzaUser.objects.filter(username=user.username).update(is_active=False)
+        PizzaUser.objects.filter(username=user.username).update(is_logged=False)
         logger.info('Update user object success while logout!')
     except DB_Error as db_err:
         logger.error(f'Update user fields while logout failed ! info: {db_err.args}')
@@ -181,7 +202,7 @@ def get_last_user_login(user: PizzaUser) -> list:
     return login_list
 
 
-def get_user_from_db(username) -> PizzaUser:
+def get_user_from_db(username: str) -> PizzaUser:
     logger: Logger = logging.getLogger(settings.LOGGER_NAME)
     db_user = None
     try:
@@ -191,3 +212,45 @@ def get_user_from_db(username) -> PizzaUser:
     except BaseException as be:
         logger.error(f'Getting user from database failed ! Base exception cached info: {be.args}')
     return db_user
+
+
+def get_user_from_db_by_mail(mail: str) -> PizzaUser:
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    db_user = None
+    try:
+        db_user = PizzaUser.objects.filter(email=mail).get()
+    except DB_Error as db_err:
+        logger.error(f'Getting user from database failed ! info: {db_err.args}')
+    except BaseException as be:
+        logger.error(f'Getting user from database failed ! Base exception cached info: {be.args}')
+    return db_user
+
+
+def create_token_to_restore_pwd(restored_user: PizzaUser) -> tuple:
+    logger: Logger = logging.getLogger(settings.LOGGER_NAME)
+    confirm_token = ''
+    status = True
+    if restored_user:
+        logger.debug('user exist')
+        confirm_token = default_token_generator.make_token(restored_user)
+        logger.debug('token created')
+        try:
+            token_expires = timezone.now() + timezone.timedelta(hours=3)
+            logger.debug(f'token expires at {token_expires}')
+            if RestorePassword.objects.filter(user=restored_user,
+                                              token=confirm_token).exists():
+                logger.debug(f'token exist')
+                RestorePassword.objects.filter(user=restored_user,
+                                               token=confirm_token).delete()
+                logger.debug(f'token deleted')
+            restore_entity = RestorePassword(
+                user=restored_user,
+                token=confirm_token,
+                deadline=token_expires
+            )
+            restore_entity.save()
+            logger.debug(f'token saved')
+        except BaseException as be:
+            logger.debug(f'exception cached: {be.args}')
+            status = False
+    return status, confirm_token
