@@ -170,6 +170,15 @@
     border-radius: 3rem;
 }
 
+.order-option-preview form {
+    margin: 0.5rem auto;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 3rem;
+}
+
 .order-option-preview button:focus,
 .order-option-preview button:hover {
     background: linear-gradient(to bottom, #5d4954, rgb(61, 54, 58));
